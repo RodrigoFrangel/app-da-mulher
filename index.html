@@ -18,7 +18,7 @@
     <style>
         /* Esconder scrollbar para um visual mais limpo de app */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
-        .tab-content { display: none; height: 100%; overflow-y: auto; padding-bottom: 120px; } /* Aumentado para garantir espaço com o nav */
+        .tab-content { display: none; height: 100%; overflow-y: auto; }
         .tab-content.active { display: block; }
         #map { height: 100%; width: 100%; z-index: 10; }
         
@@ -78,7 +78,7 @@
     <div id="app-container" class="hidden w-full max-w-md bg-white shadow-2xl h-full flex-col relative overflow-hidden">
         
         <!-- Header -->
-        <header class="bg-purple-700 text-white p-6 pb-5 shadow-lg z-20 rounded-b-3xl">
+        <header class="bg-purple-700 text-white p-6 pb-5 shadow-lg z-20 rounded-b-3xl shrink-0">
             <div class="flex justify-between items-start">
                 
                 <!-- Avatar & Textos (Esquerda) -->
@@ -111,10 +111,10 @@
         </header>
 
         <!-- VIEWS -->
-        <main class="flex-1 relative bg-slate-50">
+        <main class="flex-1 relative bg-slate-50 min-h-0">
             
             <!-- VIEW: HOME -->
-            <div id="view-home" class="tab-content active p-4 space-y-6">
+            <div id="view-home" class="tab-content active p-4 pb-32 space-y-6">
                 
                 <!-- Secção de Emergência -->
                 <div class="flex flex-col items-center justify-center py-4">
@@ -139,12 +139,6 @@
                             </div>
                         </div>
                         <i data-lucide="chevron-right" class="w-5 h-5 opacity-70"></i>
-                    </button>
-                    
-                    <!-- Botão Adicionar Contatos -->
-                    <button class="w-full bg-white border border-slate-200 text-purple-700 p-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-sm active:bg-slate-50 transition-colors">
-                        <i data-lucide="user-plus" class="w-5 h-5"></i>
-                        <span class="text-sm font-bold">Adicionar contatos de emergência</span>
                     </button>
                 </div>
 
@@ -201,7 +195,7 @@
             </div>
 
             <!-- VIEW: FEED -->
-            <div id="view-feed" class="tab-content p-4 bg-slate-50">
+            <div id="view-feed" class="tab-content p-4 pb-32 bg-slate-50">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="font-bold text-xl text-slate-800">Feed Comunitário</h2>
                     <button class="text-purple-700 text-sm font-bold flex items-center gap-1 bg-purple-100 px-3 py-1 rounded-full">
@@ -290,7 +284,7 @@
             </div>
 
             <!-- VIEW: PERFIL DO USUÁRIO -->
-            <div id="view-profile" class="tab-content p-4">
+            <div id="view-profile" class="tab-content p-4 pb-32">
                 <div class="flex items-center gap-3 mb-6">
                     <button onclick="switchTab('home')" class="p-2 bg-white rounded-full shadow-sm active:scale-95 text-slate-600">
                         <i data-lucide="arrow-left" class="w-5 h-5"></i>
