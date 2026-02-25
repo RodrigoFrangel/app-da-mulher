@@ -79,13 +79,15 @@
         
         <!-- Header -->
         <header class="bg-purple-700 text-white p-4 shadow-md flex justify-between items-center z-20">
-            <div class="flex items-center gap-2">
-                <img src="https://i.postimg.cc/x89HkzWv/logo-w-small.png" alt="Logo Guardiã" class="h-8 w-auto">
-                <h1 class="font-bold text-lg tracking-wide">Guardiã</h1>
+            <div class="flex flex-col justify-center">
+                <h1 class="font-bold text-lg tracking-wide leading-tight">Olá, <span id="header-user-name">Usuário</span></h1>
+                <p class="text-[11px] font-medium text-purple-200 flex items-center gap-1">
+                    <i data-lucide="map-pin" class="w-3 h-3"></i> Sorocaba, SP
+                </p>
             </div>
             <!-- Imagem de perfil que abre o Modal Menu -->
             <div class="relative cursor-pointer active:scale-95 transition-transform" onclick="openMenuModal()">
-                <img src="https://i.pravatar.cc/100?img=5" alt="Perfil" id="header-avatar" class="w-9 h-9 rounded-full border-2 border-purple-300 object-cover">
+                <img src="https://i.pravatar.cc/100?img=5" alt="Perfil" id="header-avatar" class="w-10 h-10 rounded-full border-2 border-purple-300 object-cover shadow-sm">
                 <span class="absolute top-0 right-0 w-3 h-3 bg-green-400 border-2 border-purple-700 rounded-full"></span>
             </div>
         </header>
@@ -96,13 +98,8 @@
             <!-- VIEW: HOME -->
             <div id="view-home" class="tab-content active p-4 space-y-6">
                 
-                <div class="mt-2">
-                    <h2 class="text-xl font-bold text-slate-800">Olá, <span id="home-user-name">Usuário</span>!</h2>
-                    <p class="text-sm text-slate-500">Sorocaba, SP</p>
-                </div>
-
                 <!-- Secção de Emergência -->
-                <div class="flex flex-col items-center justify-center py-2">
+                <div class="flex flex-col items-center justify-center py-4">
                     <button onclick="openSosModal()" class="btn-sos bg-red-600 text-white w-40 h-40 rounded-full flex flex-col items-center justify-center shadow-lg active:scale-95 transition-transform">
                         <i data-lucide="siren" class="w-12 h-12 mb-2"></i>
                         <span class="font-bold text-2xl tracking-widest">SOS</span>
@@ -111,14 +108,25 @@
                 </div>
 
                 <!-- Ações Rápidas -->
-                <div class="grid grid-cols-2 gap-4">
-                    <button class="bg-purple-100 text-purple-800 p-4 rounded-xl flex flex-col items-center justify-center gap-2 shadow-sm active:bg-purple-200">
-                        <i data-lucide="map-pin"></i>
-                        <span class="text-sm font-semibold text-center">Partilhar Localização</span>
+                <div class="space-y-3">
+                    <!-- Botão Compartilhar Localização Melhorado -->
+                    <button class="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white p-4 rounded-2xl flex items-center justify-between shadow-md active:scale-[0.98] transition-transform">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-white/20 p-2.5 rounded-xl">
+                                <i data-lucide="navigation" class="w-6 h-6"></i>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-sm font-bold">Compartilhar Localização</span>
+                                <span class="block text-xs text-purple-200">Envie seu trajeto em tempo real</span>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 opacity-70"></i>
                     </button>
-                    <button class="bg-purple-100 text-purple-800 p-4 rounded-xl flex flex-col items-center justify-center gap-2 shadow-sm active:bg-purple-200">
-                        <i data-lucide="users"></i>
-                        <span class="text-sm font-semibold text-center">Contatos Seguros</span>
+                    
+                    <!-- Botão Adicionar Contatos -->
+                    <button class="w-full bg-white border border-slate-200 text-purple-700 p-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-sm active:bg-slate-50 transition-colors">
+                        <i data-lucide="user-plus" class="w-5 h-5"></i>
+                        <span class="text-sm font-bold">Adicionar contatos de emergência</span>
                     </button>
                 </div>
 
@@ -128,21 +136,21 @@
                         <i data-lucide="bell-ring" class="w-5 h-5"></i> Alertas na tua zona
                     </h2>
                     <div class="space-y-3">
-                        <div class="bg-white p-3 rounded-lg shadow-sm border border-slate-100 flex items-start gap-3">
-                            <div class="bg-yellow-100 p-2 rounded-full text-yellow-600">
+                        <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-start gap-3">
+                            <div class="bg-yellow-100 p-2 rounded-xl text-yellow-600">
                                 <i data-lucide="lightbulb-off" class="w-5 h-5"></i>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-sm">Rua mal iluminada</h3>
+                                <h3 class="font-bold text-sm text-slate-800">Rua mal iluminada</h3>
                                 <p class="text-xs text-slate-500">Av. Afonso Vergueiro (Há 10 min)</p>
                             </div>
                         </div>
-                        <div class="bg-white p-3 rounded-lg shadow-sm border border-slate-100 flex items-start gap-3 relative overflow-hidden">
-                            <div class="bg-blue-100 p-2 rounded-full text-blue-600">
+                        <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-start gap-3 relative overflow-hidden">
+                            <div class="bg-blue-100 p-2 rounded-xl text-blue-600">
                                 <i data-lucide="car" class="w-5 h-5"></i>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-sm">Rede de Motoristas</h3>
+                                <h3 class="font-bold text-sm text-slate-800">Rede de Motoristas</h3>
                                 <p class="text-xs text-slate-500">Procura motoristas verificadas.</p>
                             </div>
                             <span class="absolute top-2 right-2 bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">WIP</span>
@@ -155,13 +163,13 @@
             <div id="view-map" class="tab-content relative">
                 <!-- Filtros flutuantes sobre o mapa -->
                 <div class="absolute top-2 left-2 right-2 z-20 flex gap-2 overflow-x-auto pb-2 drop-shadow-md">
-                    <button class="bg-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 border border-slate-200 text-red-600">
+                    <button class="bg-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 border border-slate-200 text-red-600 shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-red-600"></span> Risco
                     </button>
-                    <button class="bg-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 border border-slate-200 text-green-600">
+                    <button class="bg-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 border border-slate-200 text-green-600 shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-green-600"></span> Seguro
                     </button>
-                    <button class="bg-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 border border-slate-200 text-purple-600">
+                    <button class="bg-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 border border-slate-200 text-purple-600 shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-purple-600"></span> ONGs/Apoio
                     </button>
                 </div>
@@ -169,55 +177,95 @@
                 <div id="map"></div>
                 
                 <!-- Botão Adicionar Ponto no Mapa -->
-                <button class="absolute bottom-28 right-4 z-20 bg-purple-700 text-white p-3 rounded-full shadow-lg active:scale-95">
-                    <i data-lucide="plus"></i>
+                <button class="absolute bottom-28 right-4 z-20 bg-purple-700 text-white p-3.5 rounded-full shadow-lg active:scale-95">
+                    <i data-lucide="plus" class="w-6 h-6"></i>
                 </button>
             </div>
 
             <!-- VIEW: FEED -->
-            <div id="view-feed" class="tab-content p-4 bg-slate-100">
+            <div id="view-feed" class="tab-content p-4 bg-slate-50">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="font-bold text-lg">Feed Comunitário</h2>
-                    <button class="text-purple-700 text-sm font-semibold">Filtrar</button>
+                    <h2 class="font-bold text-xl text-slate-800">Feed Comunitário</h2>
+                    <button class="text-purple-700 text-sm font-bold flex items-center gap-1 bg-purple-100 px-3 py-1 rounded-full">
+                        <i data-lucide="filter" class="w-3 h-3"></i> Filtrar
+                    </button>
                 </div>
                 
                 <div class="space-y-4">
                     <!-- Post 1 -->
-                    <div class="bg-white p-4 rounded-xl shadow-sm">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
                         <div class="flex justify-between items-start mb-2">
                             <div class="flex items-center gap-2">
-                                <div class="bg-purple-200 w-8 h-8 rounded-full flex items-center justify-center text-purple-700 font-bold text-xs">A</div>
+                                <div class="bg-purple-200 w-9 h-9 rounded-full flex items-center justify-center text-purple-700 font-bold text-sm">A</div>
                                 <div>
-                                    <h4 class="font-semibold text-sm">Anônimo</h4>
-                                    <p class="text-xs text-slate-400">Parque Campolim • Hoje, 18:30</p>
+                                    <h4 class="font-bold text-sm text-slate-800">Anônimo</h4>
+                                    <p class="text-[11px] font-medium text-slate-400">Parque Campolim • Hoje, 18:30</p>
                                 </div>
                             </div>
-                            <span class="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-1 rounded">ASSÉDIO</span>
+                            <span class="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-1 rounded-md">ASSÉDIO</span>
                         </div>
-                        <p class="text-sm text-slate-700 mt-2">Indivíduo suspeito perto da pista de caminhada. Já avisei a GCM.</p>
-                        <div class="mt-3 flex gap-4 text-slate-500">
-                            <button class="flex items-center gap-1 text-xs hover:text-purple-600"><i data-lucide="thumbs-up" class="w-4 h-4"></i> 12</button>
-                            <button class="flex items-center gap-1 text-xs hover:text-purple-600"><i data-lucide="message-square" class="w-4 h-4"></i> 3</button>
+                        <p class="text-sm text-slate-700 mt-2">Indivíduo suspeito perto da pista de caminhada. Já avisei a GCM, tomem cuidado ao passar por ali sozinhas.</p>
+                        <div class="mt-3 flex gap-4 text-slate-500 border-t border-slate-50 pt-2">
+                            <button class="flex items-center gap-1.5 text-xs font-medium hover:text-purple-600"><i data-lucide="thumbs-up" class="w-4 h-4"></i> 12</button>
+                            <button class="flex items-center gap-1.5 text-xs font-medium hover:text-purple-600"><i data-lucide="message-square" class="w-4 h-4"></i> 3</button>
                         </div>
                     </div>
 
                     <!-- Post 2 -->
-                    <div class="bg-white p-4 rounded-xl shadow-sm relative overflow-hidden">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
                         <div class="flex justify-between items-start mb-2">
                             <div class="flex items-center gap-2">
-                                <img src="https://i.pravatar.cc/100?img=9" class="w-8 h-8 rounded-full">
+                                <img src="https://i.pravatar.cc/100?img=43" class="w-9 h-9 rounded-full object-cover">
                                 <div>
-                                    <h4 class="font-semibold text-sm">Ana Costa</h4>
-                                    <p class="text-xs text-slate-400">Centro • Ontem</p>
+                                    <h4 class="font-bold text-sm text-slate-800">Carla T.</h4>
+                                    <p class="text-[11px] font-medium text-slate-400">Zona Norte • Hoje, 14:15</p>
                                 </div>
                             </div>
-                            <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded">LOCAL SEGURO</span>
+                            <span class="bg-orange-100 text-orange-700 text-[10px] font-bold px-2 py-1 rounded-md">ATENÇÃO</span>
                         </div>
-                        <p class="text-sm text-slate-700 mt-2">Avaliação do ponto de ônibus do Terminal Santo Antônio. Bem iluminado e com seguranças.</p>
+                        <p class="text-sm text-slate-700 mt-2">Carro cinza rondando o ponto da Avenida Itavuvu perto do shopping faz uns 20 minutos. Fiquem atentas!</p>
+                        <div class="mt-3 flex gap-4 text-slate-500 border-t border-slate-50 pt-2">
+                            <button class="flex items-center gap-1.5 text-xs font-medium hover:text-purple-600"><i data-lucide="thumbs-up" class="w-4 h-4"></i> 45</button>
+                            <button class="flex items-center gap-1.5 text-xs font-medium hover:text-purple-600"><i data-lucide="message-square" class="w-4 h-4"></i> 12</button>
+                        </div>
+                    </div>
+
+                    <!-- Post 3 -->
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-2">
+                                <img src="https://i.pravatar.cc/100?img=9" class="w-9 h-9 rounded-full object-cover">
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-800">Ana Costa</h4>
+                                    <p class="text-[11px] font-medium text-slate-400">Centro • Ontem</p>
+                                </div>
+                            </div>
+                            <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-md">LOCAL SEGURO</span>
+                        </div>
+                        <p class="text-sm text-slate-700 mt-2">Avaliação do ponto de ônibus do Terminal Santo Antônio. Bem iluminado e com seguranças rodando o tempo todo.</p>
                         
                         <!-- Overlay Beta/WIP -->
                         <div class="absolute inset-0 bg-white/70 backdrop-blur-[1px] flex items-center justify-center">
-                            <span class="bg-slate-800 text-white text-xs font-bold px-3 py-1 rounded-full shadow">Funcionalidade Beta</span>
+                            <span class="bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">Funcionalidade Beta</span>
+                        </div>
+                    </div>
+
+                    <!-- Post 4 -->
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-2">
+                                <img src="https://i.pravatar.cc/100?img=32" class="w-9 h-9 rounded-full object-cover">
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-800">Beatriz</h4>
+                                    <p class="text-[11px] font-medium text-slate-400">Além Ponte • Ontem</p>
+                                </div>
+                            </div>
+                            <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded-md">ILUMINAÇÃO</span>
+                        </div>
+                        <p class="text-sm text-slate-700 mt-2">Meninas, finalmente arrumaram a luz do poste na rua da faculdade! Voltar pra casa à noite tá muito mais seguro agora. 🙏</p>
+                        <div class="mt-3 flex gap-4 text-slate-500 border-t border-slate-50 pt-2">
+                            <button class="flex items-center gap-1.5 text-xs font-medium hover:text-purple-600"><i data-lucide="thumbs-up" class="w-4 h-4"></i> 89</button>
+                            <button class="flex items-center gap-1.5 text-xs font-medium hover:text-purple-600"><i data-lucide="message-square" class="w-4 h-4"></i> 5</button>
                         </div>
                     </div>
                 </div>
@@ -232,8 +280,8 @@
                     <h2 class="font-bold text-lg">Meu Perfil</h2>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center relative">
-                    <button class="absolute top-4 right-4 text-purple-600 bg-purple-50 p-2 rounded-full active:scale-95">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col items-center text-center relative">
+                    <button class="absolute top-4 right-4 text-purple-600 bg-purple-50 p-2.5 rounded-full active:scale-95">
                         <i data-lucide="edit-3" class="w-4 h-4"></i>
                     </button>
                     
@@ -244,53 +292,43 @@
                     </p>
                     
                     <div class="flex gap-4 w-full mt-2">
-                        <div class="flex-1 bg-purple-50 py-3 rounded-xl border border-purple-100">
-                            <span class="block font-bold text-purple-700 text-xl">12</span>
-                            <span class="text-xs text-slate-600 font-medium">Alertas</span>
+                        <div class="flex-1 bg-purple-50 py-3 rounded-2xl border border-purple-100">
+                            <span class="block font-bold text-purple-700 text-2xl">12</span>
+                            <span class="text-xs text-slate-600 font-bold">Alertas</span>
                         </div>
-                        <div class="flex-1 bg-green-50 py-3 rounded-xl border border-green-100">
-                            <span class="block font-bold text-green-700 text-xl">5</span>
-                            <span class="text-xs text-slate-600 font-medium">Locais Salvos</span>
+                        <div class="flex-1 bg-green-50 py-3 rounded-2xl border border-green-100">
+                            <span class="block font-bold text-green-700 text-2xl">5</span>
+                            <span class="text-xs text-slate-600 font-bold">Locais Salvos</span>
                         </div>
                     </div>
-                </div>
-
-                <div class="mt-6 space-y-3">
-                    <h4 class="font-bold text-sm text-slate-500 uppercase tracking-wider mb-2">Ações</h4>
-                    <button class="w-full bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between text-slate-700 font-medium active:bg-slate-50">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="users" class="w-5 h-5 text-purple-600"></i> Gerenciar Contatos Seguros
-                        </div>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
-                    </button>
                 </div>
             </div>
 
         </main>
 
-        <!-- Bottom Navigation (Compacto e Lilás) -->
-        <nav class="absolute bottom-6 left-4 right-4 z-30 pointer-events-none">
-            <div class="bg-purple-700/95 backdrop-blur-md shadow-2xl border border-purple-600 rounded-[2rem] flex justify-around items-center h-16 px-2 pointer-events-auto">
+        <!-- Bottom Navigation (Mais compacto, flutuante e centralizado) -->
+        <nav class="absolute bottom-6 left-1/2 -translate-x-1/2 w-[85%] max-w-[320px] z-30 pointer-events-none">
+            <div class="bg-purple-700/95 backdrop-blur-md shadow-2xl border border-purple-600 rounded-full flex justify-around items-center h-[64px] px-2 pointer-events-auto">
                 
                 <button onclick="switchTab('home')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-white transition-colors" data-target="home">
-                    <div class="icon-wrapper p-1.5 rounded-xl bg-white/20 transition-all duration-300 mb-0.5">
+                    <div class="icon-wrapper p-1.5 rounded-full bg-white/20 transition-all duration-300 mb-0.5">
                         <i data-lucide="home" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[10px] font-medium tracking-wide">Início</span>
+                    <span class="text-[10px] font-bold tracking-wide">Início</span>
                 </button>
                 
                 <button onclick="switchTab('map')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-purple-300 transition-colors" data-target="map">
-                    <div class="icon-wrapper p-1.5 rounded-xl bg-transparent transition-all duration-300 mb-0.5">
+                    <div class="icon-wrapper p-1.5 rounded-full bg-transparent transition-all duration-300 mb-0.5">
                         <i data-lucide="map" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[10px] font-medium tracking-wide">Mapa</span>
+                    <span class="text-[10px] font-bold tracking-wide">Mapa</span>
                 </button>
                 
                 <button onclick="switchTab('feed')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-purple-300 transition-colors" data-target="feed">
-                    <div class="icon-wrapper p-1.5 rounded-xl bg-transparent transition-all duration-300 mb-0.5">
+                    <div class="icon-wrapper p-1.5 rounded-full bg-transparent transition-all duration-300 mb-0.5">
                         <i data-lucide="message-square" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[10px] font-medium tracking-wide">Feed</span>
+                    <span class="text-[10px] font-bold tracking-wide">Feed</span>
                 </button>
                 
             </div>
@@ -298,19 +336,19 @@
 
         <!-- Modal SOS -->
         <div id="sos-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex-col justify-end">
-            <div class="bg-white rounded-t-2xl p-6 transform transition-transform translate-y-full" id="sos-content">
+            <div class="bg-white rounded-t-[2rem] p-6 transform transition-transform translate-y-full" id="sos-content">
                 <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-                <h3 class="text-xl font-bold text-center text-red-600 mb-2">Emergência</h3>
+                <h3 class="text-2xl font-bold text-center text-red-600 mb-2">Emergência</h3>
                 <p class="text-center text-slate-600 text-sm mb-6">Selecione a autoridade que deseja contactar. A sua localização será partilhada.</p>
                 
                 <div class="space-y-3">
-                    <a href="tel:190" class="block w-full bg-red-600 text-white text-center font-bold py-4 rounded-xl flex items-center justify-center gap-2">
+                    <a href="tel:190" class="block w-full bg-red-600 text-white text-center font-bold py-4 rounded-2xl flex items-center justify-center gap-2">
                         <i data-lucide="phone" class="w-5 h-5"></i> Polícia Militar (190)
                     </a>
-                    <a href="tel:180" class="block w-full bg-purple-700 text-white text-center font-bold py-4 rounded-xl flex items-center justify-center gap-2">
+                    <a href="tel:180" class="block w-full bg-purple-700 text-white text-center font-bold py-4 rounded-2xl flex items-center justify-center gap-2">
                         <i data-lucide="shield-alert" class="w-5 h-5"></i> Delegacia da Mulher (180)
                     </a>
-                    <button onclick="closeSosModal()" class="block w-full bg-slate-100 text-slate-700 text-center font-bold py-4 rounded-xl mt-4">
+                    <button onclick="closeSosModal()" class="block w-full bg-slate-100 text-slate-700 text-center font-bold py-4 rounded-2xl mt-4">
                         Cancelar
                     </button>
                 </div>
@@ -319,7 +357,7 @@
 
         <!-- Modal Menu (Abre ao clicar na foto de perfil) -->
         <div id="menu-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex-col justify-end">
-            <div class="bg-white rounded-t-2xl p-6 transform transition-transform translate-y-full" id="menu-content">
+            <div class="bg-white rounded-t-[2rem] p-6 transform transition-transform translate-y-full" id="menu-content">
                 <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4"></div>
                 
                 <!-- Info do Usuário no Modal -->
@@ -327,31 +365,40 @@
                     <img src="https://i.pravatar.cc/100?img=5" id="menu-avatar" class="w-14 h-14 rounded-full border-2 border-purple-100 object-cover">
                     <div>
                         <h3 class="font-bold text-lg text-slate-800" id="menu-user-name">Mariana</h3>
-                        <p class="text-sm text-slate-500" id="menu-user-email">mariana@exemplo.com</p>
+                        <p class="text-sm text-slate-500 font-medium" id="menu-user-email">mariana@exemplo.com</p>
                     </div>
                 </div>
 
-                <h4 class="font-bold text-xs text-slate-400 uppercase tracking-wider mb-2 px-1">Configurações</h4>
+                <h4 class="font-bold text-xs text-slate-400 uppercase tracking-wider mb-3 px-1">Configurações e Conta</h4>
                 <ul class="space-y-1 mb-4">
-                    <li onclick="switchTab('profile'); closeMenuModal()" class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-xl cursor-pointer transition-colors">
-                        <div class="bg-purple-100 p-2 rounded-lg text-purple-700"><i data-lucide="user" class="w-5 h-5"></i></div>
-                        <span class="font-semibold text-slate-700 flex-1">Meu Perfil</span>
+                    <li onclick="switchTab('profile'); closeMenuModal()" class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-2xl cursor-pointer transition-colors">
+                        <div class="bg-purple-100 p-2.5 rounded-xl text-purple-700"><i data-lucide="user" class="w-5 h-5"></i></div>
+                        <span class="font-bold text-slate-700 flex-1">Meu Perfil</span>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
                     </li>
-                    <li class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-xl relative cursor-pointer transition-colors">
-                        <div class="bg-blue-100 p-2 rounded-lg text-blue-700"><i data-lucide="car" class="w-5 h-5"></i></div>
-                        <span class="font-semibold text-slate-700 flex-1">Modo Condutora</span>
-                        <span class="bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded mr-2">WIP</span>
+                    
+                    <!-- Contatos Seguros transferido para cá -->
+                    <li class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-2xl cursor-pointer transition-colors">
+                        <div class="bg-green-100 p-2.5 rounded-xl text-green-700"><i data-lucide="users" class="w-5 h-5"></i></div>
+                        <span class="font-bold text-slate-700 flex-1">Contatos Seguros</span>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
                     </li>
-                    <li class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-xl cursor-pointer transition-colors">
-                        <div class="bg-slate-100 p-2 rounded-lg text-slate-600"><i data-lucide="shield" class="w-5 h-5"></i></div>
-                        <span class="font-semibold text-slate-700 flex-1">Privacidade (LGPD)</span>
+
+                    <li class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-2xl relative cursor-pointer transition-colors">
+                        <div class="bg-blue-100 p-2.5 rounded-xl text-blue-700"><i data-lucide="car" class="w-5 h-5"></i></div>
+                        <span class="font-bold text-slate-700 flex-1">Modo Condutora</span>
+                        <span class="bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md mr-2">WIP</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                    </li>
+                    
+                    <li class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-2xl cursor-pointer transition-colors">
+                        <div class="bg-slate-100 p-2.5 rounded-xl text-slate-600"><i data-lucide="shield" class="w-5 h-5"></i></div>
+                        <span class="font-bold text-slate-700 flex-1">Privacidade (LGPD)</span>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
                     </li>
                 </ul>
 
-                <button onclick="doLogout(); closeMenuModal()" class="w-full p-4 flex items-center justify-center gap-2 text-red-600 font-bold bg-red-50 rounded-xl active:bg-red-100 transition-colors mt-2">
+                <button onclick="doLogout(); closeMenuModal()" class="w-full p-4 flex items-center justify-center gap-2 text-red-600 font-bold bg-red-50 rounded-2xl active:bg-red-100 transition-colors mt-2">
                     <i data-lucide="log-out" class="w-5 h-5"></i> Sair da Conta
                 </button>
             </div>
@@ -377,7 +424,7 @@
             const finalName = userName.charAt(0).toUpperCase() + userName.slice(1);
 
             // Preenche os dados na interface
-            document.getElementById('home-user-name').innerText = finalName;
+            document.getElementById('header-user-name').innerText = finalName;
             
             // Perfil View
             document.getElementById('profile-name').innerText = finalName;
