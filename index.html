@@ -18,7 +18,7 @@
     <style>
         /* Esconder scrollbar para um visual mais limpo de app */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
-        .tab-content { display: none; height: 100%; overflow-y: auto; padding-bottom: 100px; }
+        .tab-content { display: none; height: 100%; overflow-y: auto; padding-bottom: 120px; } /* Aumentado para garantir espaço com o nav */
         .tab-content.active { display: block; }
         #map { height: 100%; width: 100%; z-index: 10; }
         
@@ -51,7 +51,7 @@
                 <label class="block text-sm font-semibold text-slate-700 mb-1">E-mail ou CPF</label>
                 <div class="relative">
                     <i data-lucide="user" class="absolute left-3 top-3.5 w-5 h-5 text-slate-400"></i>
-                    <input type="text" id="login-input" value="rodrigo@exemplo.com" class="w-full pl-10 p-3 border border-slate-300 rounded-xl focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 bg-slate-50">
+                    <input type="text" id="login-input" value="mariana@exemplo.com" class="w-full pl-10 p-3 border border-slate-300 rounded-xl focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 bg-slate-50">
                 </div>
             </div>
             <div>
@@ -85,7 +85,7 @@
             </div>
             <!-- Imagem de perfil que abre o Modal Menu -->
             <div class="relative cursor-pointer active:scale-95 transition-transform" onclick="openMenuModal()">
-                <img src="https://i.pravatar.cc/100?img=11" alt="Perfil" id="header-avatar" class="w-9 h-9 rounded-full border-2 border-purple-300 object-cover">
+                <img src="https://i.pravatar.cc/100?img=5" alt="Perfil" id="header-avatar" class="w-9 h-9 rounded-full border-2 border-purple-300 object-cover">
                 <span class="absolute top-0 right-0 w-3 h-3 bg-green-400 border-2 border-purple-700 rounded-full"></span>
             </div>
         </header>
@@ -205,9 +205,9 @@
                     <div class="bg-white p-4 rounded-xl shadow-sm relative overflow-hidden">
                         <div class="flex justify-between items-start mb-2">
                             <div class="flex items-center gap-2">
-                                <img src="https://i.pravatar.cc/100?img=12" class="w-8 h-8 rounded-full">
+                                <img src="https://i.pravatar.cc/100?img=9" class="w-8 h-8 rounded-full">
                                 <div>
-                                    <h4 class="font-semibold text-sm">Mariana C.</h4>
+                                    <h4 class="font-semibold text-sm">Ana Costa</h4>
                                     <p class="text-xs text-slate-400">Centro • Ontem</p>
                                 </div>
                             </div>
@@ -237,10 +237,10 @@
                         <i data-lucide="edit-3" class="w-4 h-4"></i>
                     </button>
                     
-                    <img src="https://i.pravatar.cc/100?img=11" id="profile-avatar" class="w-24 h-24 rounded-full border-4 border-purple-100 object-cover mb-4">
-                    <h3 class="font-bold text-xl text-slate-800" id="profile-name">Rodrigo</h3>
+                    <img src="https://i.pravatar.cc/100?img=5" id="profile-avatar" class="w-24 h-24 rounded-full border-4 border-purple-100 object-cover mb-4">
+                    <h3 class="font-bold text-xl text-slate-800" id="profile-name">Mariana</h3>
                     <p class="text-slate-500 text-sm mb-4 flex items-center justify-center gap-1">
-                        <i data-lucide="mail" class="w-4 h-4"></i> <span id="profile-email">rodrigo@exemplo.com</span>
+                        <i data-lucide="mail" class="w-4 h-4"></i> <span id="profile-email">mariana@exemplo.com</span>
                     </p>
                     
                     <div class="flex gap-4 w-full mt-2">
@@ -268,29 +268,29 @@
 
         </main>
 
-        <!-- Bottom Navigation (Atrativo e Flutuante) -->
+        <!-- Bottom Navigation (Compacto e Lilás) -->
         <nav class="absolute bottom-6 left-4 right-4 z-30 pointer-events-none">
-            <div class="bg-white/95 backdrop-blur-lg shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 rounded-3xl flex justify-around items-center h-[72px] px-2 pointer-events-auto">
+            <div class="bg-purple-700/95 backdrop-blur-md shadow-2xl border border-purple-600 rounded-[2rem] flex justify-around items-center h-16 px-2 pointer-events-auto">
                 
-                <button onclick="switchTab('home')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-purple-700 transition-colors" data-target="home">
-                    <div class="icon-wrapper p-2 rounded-2xl bg-purple-100 transition-all duration-300 mb-0.5">
+                <button onclick="switchTab('home')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-white transition-colors" data-target="home">
+                    <div class="icon-wrapper p-1.5 rounded-xl bg-white/20 transition-all duration-300 mb-0.5">
                         <i data-lucide="home" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[10px] font-bold tracking-wide">Início</span>
+                    <span class="text-[10px] font-medium tracking-wide">Início</span>
                 </button>
                 
-                <button onclick="switchTab('map')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors" data-target="map">
-                    <div class="icon-wrapper p-2 rounded-2xl bg-transparent transition-all duration-300 mb-0.5">
+                <button onclick="switchTab('map')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-purple-300 transition-colors" data-target="map">
+                    <div class="icon-wrapper p-1.5 rounded-xl bg-transparent transition-all duration-300 mb-0.5">
                         <i data-lucide="map" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[10px] font-bold tracking-wide">Mapa</span>
+                    <span class="text-[10px] font-medium tracking-wide">Mapa</span>
                 </button>
                 
-                <button onclick="switchTab('feed')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors" data-target="feed">
-                    <div class="icon-wrapper p-2 rounded-2xl bg-transparent transition-all duration-300 mb-0.5">
+                <button onclick="switchTab('feed')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-purple-300 transition-colors" data-target="feed">
+                    <div class="icon-wrapper p-1.5 rounded-xl bg-transparent transition-all duration-300 mb-0.5">
                         <i data-lucide="message-square" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[10px] font-bold tracking-wide">Feed</span>
+                    <span class="text-[10px] font-medium tracking-wide">Feed</span>
                 </button>
                 
             </div>
@@ -324,10 +324,10 @@
                 
                 <!-- Info do Usuário no Modal -->
                 <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
-                    <img src="https://i.pravatar.cc/100?img=11" id="menu-avatar" class="w-14 h-14 rounded-full border-2 border-purple-100 object-cover">
+                    <img src="https://i.pravatar.cc/100?img=5" id="menu-avatar" class="w-14 h-14 rounded-full border-2 border-purple-100 object-cover">
                     <div>
-                        <h3 class="font-bold text-lg text-slate-800" id="menu-user-name">Rodrigo</h3>
-                        <p class="text-sm text-slate-500" id="menu-user-email">rodrigo@exemplo.com</p>
+                        <h3 class="font-bold text-lg text-slate-800" id="menu-user-name">Mariana</h3>
+                        <p class="text-sm text-slate-500" id="menu-user-email">mariana@exemplo.com</p>
                     </div>
                 </div>
 
@@ -365,9 +365,9 @@
 
         // Dados do Usuário Mock
         const mockUser = {
-            name: "Rodrigo",
-            email: "rodrigo@exemplo.com",
-            avatar: "https://i.pravatar.cc/100?img=11"
+            name: "Mariana",
+            email: "mariana@exemplo.com",
+            avatar: "https://i.pravatar.cc/100?img=5"
         };
 
         // Lógica de Autenticação (Mock)
@@ -419,19 +419,19 @@
             // Mostrar a selecionada
             document.getElementById('view-' + tabId).classList.add('active');
 
-            // Atualizar cores e fundos dos botões na nav
+            // Atualizar cores e fundos dos botões na nav (Agora adaptado para fundo roxo)
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 const iconWrapper = btn.querySelector('.icon-wrapper');
                 if(btn.dataset.target === tabId) {
-                    btn.classList.replace('text-slate-400', 'text-purple-700');
+                    btn.classList.replace('text-purple-300', 'text-white');
                     if(iconWrapper) {
                         iconWrapper.classList.remove('bg-transparent');
-                        iconWrapper.classList.add('bg-purple-100');
+                        iconWrapper.classList.add('bg-white/20');
                     }
                 } else {
-                    btn.classList.replace('text-purple-700', 'text-slate-400');
+                    btn.classList.replace('text-white', 'text-purple-300');
                     if(iconWrapper) {
-                        iconWrapper.classList.remove('bg-purple-100');
+                        iconWrapper.classList.remove('bg-white/20');
                         iconWrapper.classList.add('bg-transparent');
                     }
                 }
