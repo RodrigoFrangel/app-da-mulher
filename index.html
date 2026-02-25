@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Guardiã - Protótipo</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Leaflet CSS & JS para o Mapa -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Esconder scrollbar para um visual mais limpo de app */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        .tab-content { display: none; height: 100%; overflow-y: auto; padding-bottom: 80px; }
+        .tab-content.active { display: block; }
+        #map { height: 100%; width: 100%; z-index: 10; }
+        
+        /* Animação para o botão SOS */
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+        .btn-sos { animation: pulse-red 2s infinite; }
+    </style>
+</head>
+<body class="bg-gray-100 flex justify-center h-[100dvh] overflow-hidden text-slate-800">
+
+    <!-- TELA DE LOGIN (Inicialmente visível) -->
+    <div id="login-screen" class="w-full max-w-md bg-white shadow-2xl h-full flex flex-col items-center justify-center p-8 relative overflow-hidden z-50">
+        <div class="absolute top-[-100px] left-[-100px] w-64 h-64 bg-purple-100 rounded-full blur-3xl opacity-50"></div>
+        <div class="absolute bottom-[-100px] right-[-100px] w-64 h-64 bg-purple-200 rounded-full blur-3xl opacity-50"></div>
+        
+        <div class="mb-10 flex flex-col items-center z-10">
+            <div class="bg-purple-700 p-3 rounded-2xl shadow-lg mb-4">
+                <img src="https://i.postimg.cc/x89HkzWv/logo-w-small.png" alt="Logo Guardiã" class="h-14 w-auto">
+            </div>
+            <h1 class="font-bold text-3xl text-slate-800 tracking-tight">Guardiã</h1>
+            <p class="text-slate-500 text-sm mt-2 text-center">A sua rede de segurança hiperlocal em Sorocaba.</p>
+        </div>
+
+        <div class="w-full space-y-4 z-10">
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">E-mail ou CPF</label>
+                <div class="relative">
+                    <i data-lucide="user" class="absolute left-3 top-3.5 w-5 h-5 text-slate-400"></i>
+                    <input type="text" id="login-input" value="rodrigo@exemplo.com" class="w-full pl-10 p-3 border border-slate-300 rounded-xl focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 bg-slate-50">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Senha</label>
+                <div class="relative">
+                    <i data-lucide="lock" class="absolute left-3 top-3.5 w-5 h-5 text-slate-400"></i>
+                    <input type="password" value="********" class="w-full pl-10 p-3 border border-slate-300 rounded-xl focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 bg-slate-50">
+                </div>
+                <div class="flex justify-end mt-1">
+                    <a href="#" class="text-xs text-purple-700 font-medium">Esqueceu a senha?</a>
+                </div>
+            </div>
+            <button onclick="doLogin()" class="w-full bg-purple-700 text-white font-bold py-3.5 rounded-xl active:scale-95 transition-transform shadow-md mt-2 flex justify-center items-center gap-2">
+                Entrar <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <div class="mt-8 text-sm text-slate-600 z-10">
+            Não tem uma conta? <a href="#" class="text-purple-700 font-bold hover:underline">Cadastre-se</a>
+        </div>
+    </div>
+
+    <!-- APP CONTAINER (Inicialmente oculto) -->
+    <div id="app-container" class="hidden w-full max-w-md bg-white shadow-2xl h-full flex-col relative overflow-hidden">
+        
+        <!-- Header -->
+        <header class="bg-purple-700 text-white p-4 shadow-md flex justify-between items-center z-20">
+            <div class="flex items-center gap-2">
+                <img src="https://i.postimg.cc/x89HkzWv/logo-w-small.png" alt="Logo Guardiã" class="h-8 w-auto">
+                <h1 class="font-bold text-lg tracking-wide">Guardiã</h1>
+            </div>
+            <!-- Imagem de perfil que leva pra página do usuário -->
+            <div class="relative cursor-pointer active:scale-95 transition-transform" onclick="switchTab('profile')">
+                <img src="https://i.pravatar.cc/100?img=11" alt="Perfil" id="header-avatar" class="w-9 h-9 rounded-full border-2 border-purple-300 object-cover">
+                <span class="absolute top-0 right-0 w-3 h-3 bg-green-400 border-2 border-purple-700 rounded-full"></span>
+            </div>
+        </header>
+
+        <!-- VIEWS -->
+        <main class="flex-1 relative bg-slate-50">
+            
+            <!-- VIEW: HOME -->
+            <div id="view-home" class="tab-content active p-4 space-y-6">
+                
+                <div class="mt-2">
+                    <h2 class="text-xl font-bold text-slate-800">Olá, <span id="home-user-name">Usuário</span>!</h2>
+                    <p class="text-sm text-slate-500">Sorocaba, SP</p>
+                </div>
+
+                <!-- Secção de Emergência -->
+                <div class="flex flex-col items-center justify-center py-2">
+                    <button onclick="openSosModal()" class="btn-sos bg-red-600 text-white w-40 h-40 rounded-full flex flex-col items-center justify-center shadow-lg active:scale-95 transition-transform">
+                        <i data-lucide="siren" class="w-12 h-12 mb-2"></i>
+                        <span class="font-bold text-2xl tracking-widest">SOS</span>
+                        <span class="text-xs text-red-200 mt-1">Tocar para ajuda</span>
+                    </button>
+                </div>
+
+                <!-- Ações Rápidas -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button class="bg-purple-100 text-purple-800 p-4 rounded-xl flex flex-col items-center justify-center gap-2 shadow-sm active:bg-purple-200">
+                        <i data-lucide="map-pin"></i>
+                        <span class="text-sm font-semibold text-center">Partilhar Localização</span>
+                    </button>
+                    <button class="bg-purple-100 text-purple-800 p-4 rounded-xl flex flex-col items-center justify-center gap-2 shadow-sm active:bg-purple-200">
+                        <i data-lucide="users"></i>
+                        <span class="text-sm font-semibold text-center">Contatos Seguros</span>
+                    </button>
+                </div>
+
+                <!-- Alertas Próximos -->
+                <div>
+                    <h2 class="font-bold text-slate-700 mb-3 flex items-center gap-2">
+                        <i data-lucide="bell-ring" class="w-5 h-5"></i> Alertas na tua zona
+                    </h2>
+                    <div class="space-y-3">
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-slate-100 flex items-start gap-3">
+                            <div class="bg-yellow-100 p-2 rounded-full text-yellow-600">
+                                <i data-lucide="lightbulb-off" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-sm">Rua mal iluminada</h3>
+                                <p class="text-xs text-slate-500">Av. Afonso Vergueiro (Há 10 min)</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-slate-100 flex items-start gap-3 relative overflow-hidden">
+                            <div class="bg-blue-100 p-2 rounded-full text-blue-600">
+                                <i data-lucide="car" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-sm">Rede de Motoristas</h3>
+                                <p class="text-xs text-slate-500">Procura motoristas verificadas.</p>
+                            </div>
+                            <span class="absolute top-2 right-2 bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">WIP</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: MAPA -->
+            <div id="view-map" class="tab-content relative">
+                <!-- Filtros flutuantes sobre o mapa -->
+                <div class="absolute top-2 left-2 right-2 z-20 flex gap-2 overflow-x-auto pb-2 drop-shadow-md">
+                    <button class="bg-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 border border-slate-200 text-red-600">
+                        <span class="w-2 h-2 rounded-full bg-red-600"></span> Risco
+                    </button>
+                    <button class="bg-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 border border-slate-200 text-green-600">
+                        <span class="w-2 h-2 rounded-full bg-green-600"></span> Seguro
+                    </button>
+                    <button class="bg-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 border border-slate-200 text-purple-600">
+                        <span class="w-2 h-2 rounded-full bg-purple-600"></span> ONGs/Apoio
+                    </button>
+                </div>
+                
+                <div id="map"></div>
+                
+                <!-- Botão Adicionar Ponto no Mapa -->
+                <button class="absolute bottom-6 right-4 z-20 bg-purple-700 text-white p-3 rounded-full shadow-lg active:scale-95">
+                    <i data-lucide="plus"></i>
+                </button>
+            </div>
+
+            <!-- VIEW: FEED -->
+            <div id="view-feed" class="tab-content p-4 bg-slate-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-bold text-lg">Feed Comunitário</h2>
+                    <button class="text-purple-700 text-sm font-semibold">Filtrar</button>
+                </div>
+                
+                <div class="space-y-4">
+                    <!-- Post 1 -->
+                    <div class="bg-white p-4 rounded-xl shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-2">
+                                <div class="bg-purple-200 w-8 h-8 rounded-full flex items-center justify-center text-purple-700 font-bold text-xs">A</div>
+                                <div>
+                                    <h4 class="font-semibold text-sm">Anônimo</h4>
+                                    <p class="text-xs text-slate-400">Parque Campolim • Hoje, 18:30</p>
+                                </div>
+                            </div>
+                            <span class="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-1 rounded">ASSÉDIO</span>
+                        </div>
+                        <p class="text-sm text-slate-700 mt-2">Indivíduo suspeito perto da pista de caminhada. Já avisei a GCM.</p>
+                        <div class="mt-3 flex gap-4 text-slate-500">
+                            <button class="flex items-center gap-1 text-xs hover:text-purple-600"><i data-lucide="thumbs-up" class="w-4 h-4"></i> 12</button>
+                            <button class="flex items-center gap-1 text-xs hover:text-purple-600"><i data-lucide="message-square" class="w-4 h-4"></i> 3</button>
+                        </div>
+                    </div>
+
+                    <!-- Post 2 -->
+                    <div class="bg-white p-4 rounded-xl shadow-sm relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-2">
+                                <img src="https://i.pravatar.cc/100?img=12" class="w-8 h-8 rounded-full">
+                                <div>
+                                    <h4 class="font-semibold text-sm">Mariana C.</h4>
+                                    <p class="text-xs text-slate-400">Centro • Ontem</p>
+                                </div>
+                            </div>
+                            <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded">LOCAL SEGURO</span>
+                        </div>
+                        <p class="text-sm text-slate-700 mt-2">Avaliação do ponto de ônibus do Terminal Santo Antônio. Bem iluminado e com seguranças.</p>
+                        
+                        <!-- Overlay Beta/WIP -->
+                        <div class="absolute inset-0 bg-white/70 backdrop-blur-[1px] flex items-center justify-center">
+                            <span class="bg-slate-800 text-white text-xs font-bold px-3 py-1 rounded-full shadow">Funcionalidade Beta</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: MENU/CONFIGURAÇÕES -->
+            <div id="view-menu" class="tab-content p-4">
+                <h2 class="font-bold text-lg mb-4">Configurações</h2>
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-100">
+                    <ul class="divide-y divide-slate-100">
+                        <li onclick="switchTab('profile')" class="p-4 flex items-center gap-3 active:bg-slate-50 cursor-pointer">
+                            <i data-lucide="user" class="text-slate-400"></i>
+                            <span class="font-medium text-sm flex-1">Meu Perfil</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                        </li>
+                        <li class="p-4 flex items-center gap-3 active:bg-slate-50 relative cursor-pointer">
+                            <i data-lucide="car" class="text-slate-400"></i>
+                            <span class="font-medium text-sm flex-1">Modo Condutora</span>
+                            <span class="bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">WIP</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                        </li>
+                        <li class="p-4 flex items-center gap-3 active:bg-slate-50 cursor-pointer">
+                            <i data-lucide="shield" class="text-slate-400"></i>
+                            <span class="font-medium text-sm flex-1">Privacidade (LGPD)</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                        </li>
+                        <li onclick="doLogout()" class="p-4 flex items-center gap-3 active:bg-slate-50 text-red-600 cursor-pointer">
+                            <i data-lucide="log-out"></i>
+                            <span class="font-medium text-sm flex-1">Sair da Conta</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- VIEW: PERFIL DO USUÁRIO -->
+            <div id="view-profile" class="tab-content p-4">
+                <div class="flex items-center gap-3 mb-6">
+                    <button onclick="switchTab('home')" class="p-2 bg-white rounded-full shadow-sm active:scale-95 text-slate-600">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </button>
+                    <h2 class="font-bold text-lg">Meu Perfil</h2>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center relative">
+                    <button class="absolute top-4 right-4 text-purple-600 bg-purple-50 p-2 rounded-full active:scale-95">
+                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                    </button>
+                    
+                    <img src="https://i.pravatar.cc/100?img=11" id="profile-avatar" class="w-24 h-24 rounded-full border-4 border-purple-100 object-cover mb-4">
+                    <h3 class="font-bold text-xl text-slate-800" id="profile-name">Rodrigo</h3>
+                    <p class="text-slate-500 text-sm mb-4 flex items-center justify-center gap-1">
+                        <i data-lucide="mail" class="w-4 h-4"></i> <span id="profile-email">rodrigo@exemplo.com</span>
+                    </p>
+                    
+                    <div class="flex gap-4 w-full mt-2">
+                        <div class="flex-1 bg-purple-50 py-3 rounded-xl border border-purple-100">
+                            <span class="block font-bold text-purple-700 text-xl">12</span>
+                            <span class="text-xs text-slate-600 font-medium">Alertas</span>
+                        </div>
+                        <div class="flex-1 bg-green-50 py-3 rounded-xl border border-green-100">
+                            <span class="block font-bold text-green-700 text-xl">5</span>
+                            <span class="text-xs text-slate-600 font-medium">Locais Salvos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 space-y-3">
+                    <h4 class="font-bold text-sm text-slate-500 uppercase tracking-wider mb-2">Ações</h4>
+                    <button class="w-full bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between text-slate-700 font-medium active:bg-slate-50">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="users" class="w-5 h-5 text-purple-600"></i> Gerenciar Contatos Seguros
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+                    </button>
+                    <button onclick="doLogout()" class="w-full bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between text-red-600 font-medium active:bg-slate-50">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="log-out" class="w-5 h-5"></i> Sair da Conta
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bg-white border-t border-slate-200 absolute bottom-0 w-full z-30 pb-safe">
+            <div class="flex justify-around items-center h-16">
+                <button onclick="switchTab('home')" class="nav-btn text-purple-700 flex flex-col items-center gap-1 w-full" data-target="home">
+                    <i data-lucide="home" class="w-6 h-6"></i>
+                    <span class="text-[10px] font-semibold">Início</span>
+                </button>
+                <button onclick="switchTab('map')" class="nav-btn text-slate-400 flex flex-col items-center gap-1 w-full" data-target="map">
+                    <i data-lucide="map" class="w-6 h-6"></i>
+                    <span class="text-[10px] font-semibold">Mapa</span>
+                </button>
+                <button onclick="switchTab('feed')" class="nav-btn text-slate-400 flex flex-col items-center gap-1 w-full" data-target="feed">
+                    <i data-lucide="list" class="w-6 h-6"></i>
+                    <span class="text-[10px] font-semibold">Avisos</span>
+                </button>
+                <button onclick="switchTab('menu')" class="nav-btn text-slate-400 flex flex-col items-center gap-1 w-full" data-target="menu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                    <span class="text-[10px] font-semibold">Menu</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Modal SOS -->
+        <div id="sos-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex-col justify-end">
+            <div class="bg-white rounded-t-2xl p-6 transform transition-transform translate-y-full" id="sos-content">
+                <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+                <h3 class="text-xl font-bold text-center text-red-600 mb-2">Emergência</h3>
+                <p class="text-center text-slate-600 text-sm mb-6">Selecione a autoridade que deseja contactar. A sua localização será partilhada.</p>
+                
+                <div class="space-y-3">
+                    <a href="tel:190" class="block w-full bg-red-600 text-white text-center font-bold py-4 rounded-xl flex items-center justify-center gap-2">
+                        <i data-lucide="phone" class="w-5 h-5"></i> Polícia Militar (190)
+                    </a>
+                    <a href="tel:180" class="block w-full bg-purple-700 text-white text-center font-bold py-4 rounded-xl flex items-center justify-center gap-2">
+                        <i data-lucide="shield-alert" class="w-5 h-5"></i> Delegacia da Mulher (180)
+                    </a>
+                    <button onclick="closeSosModal()" class="block w-full bg-slate-100 text-slate-700 text-center font-bold py-4 rounded-xl mt-4">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Inicializar ícones Lucide
+        lucide.createIcons();
+
+        // Dados do Usuário Mock
+        const mockUser = {
+            name: "Rodrigo",
+            email: "rodrigo@exemplo.com",
+            avatar: "https://i.pravatar.cc/100?img=11"
+        };
+
+        // Lógica de Autenticação (Mock)
+        function doLogin() {
+            // Pega o valor digitado no input de login
+            const inputValue = document.getElementById('login-input').value;
+            // Se tiver "@", usa a parte antes do @ como nome, senão usa o mock
+            const userName = inputValue.includes('@') ? inputValue.split('@')[0] : mockUser.name;
+            const finalName = userName.charAt(0).toUpperCase() + userName.slice(1);
+
+            // Preenche os dados na interface
+            document.getElementById('home-user-name').innerText = finalName;
+            document.getElementById('profile-name').innerText = finalName;
+            document.getElementById('profile-email').innerText = inputValue;
+            
+            document.getElementById('header-avatar').src = mockUser.avatar;
+            document.getElementById('profile-avatar').src = mockUser.avatar;
+
+            // Transição de telas
+            document.getElementById('login-screen').classList.add('hidden');
+            const appContainer = document.getElementById('app-container');
+            appContainer.classList.remove('hidden');
+            appContainer.classList.add('flex');
+            
+            // Inicia na Home
+            switchTab('home');
+        }
+
+        function doLogout() {
+            const appContainer = document.getElementById('app-container');
+            appContainer.classList.add('hidden');
+            appContainer.classList.remove('flex');
+            document.getElementById('login-screen').classList.remove('hidden');
+        }
+
+        // Lógica de Tabs
+        let mapInitialized = false;
+        let map;
+
+        function switchTab(tabId) {
+            // Esconder todas as views
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            // Mostrar a selecionada
+            document.getElementById('view-' + tabId).classList.add('active');
+
+            // Atualizar cores dos botões na nav (o 'profile' não tem botão na nav)
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.dataset.target === tabId) {
+                    btn.classList.replace('text-slate-400', 'text-purple-700');
+                } else {
+                    btn.classList.replace('text-purple-700', 'text-slate-400');
+                }
+            });
+
+            // Inicializar mapa apenas quando a tab for clicada pela primeira vez
+            if (tabId === 'map') {
+                setTimeout(() => {
+                    if (!mapInitialized) {
+                        initMap();
+                        mapInitialized = true;
+                    } else {
+                        map.invalidateSize(); // Corrige renderização se a tab estava oculta
+                    }
+                }, 100);
+            }
+        }
+
+        // Lógica do Mapa (Leaflet focado em Sorocaba)
+        function initMap() {
+            // Coordenadas centrais de Sorocaba
+            const sorocabaCoords = [-23.5015, -47.4581];
+            
+            map = L.map('map', {
+                zoomControl: false // removido para visual mais limpo em mobile
+            }).setView(sorocabaCoords, 13);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+            }).addTo(map);
+
+            // Ícones customizados
+            const dangerIcon = L.divIcon({
+                html: `<div style="background-color: #dc2626; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+                className: ''
+            });
+
+            const safeIcon = L.divIcon({
+                html: `<div style="background-color: #16a34a; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+                className: ''
+            });
+
+            const ongIcon = L.divIcon({
+                html: `<div style="background-color: #7e22ce; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+                className: ''
+            });
+
+            // Adicionar alguns marcadores mockados de Sorocaba
+            L.marker([-23.5120, -47.4650], {icon: dangerIcon}).addTo(map).bindPopup('Atenção: Área mal iluminada');
+            L.marker([-23.4950, -47.4510], {icon: safeIcon}).addTo(map).bindPopup('Ponto Seguro Verificado');
+            L.marker([-23.5050, -47.4580], {icon: ongIcon}).addTo(map).bindPopup('ONG Apoio à Mulher');
+        }
+
+        // Lógica do Modal SOS
+        const sosModal = document.getElementById('sos-modal');
+        const sosContent = document.getElementById('sos-content');
+
+        function openSosModal() {
+            sosModal.classList.remove('hidden');
+            sosModal.classList.add('flex');
+            // Pequeno delay para a animação do bottom sheet
+            setTimeout(() => {
+                sosContent.classList.remove('translate-y-full');
+            }, 10);
+        }
+
+        function closeSosModal() {
+            sosContent.classList.add('translate-y-full');
+            setTimeout(() => {
+                sosModal.classList.add('hidden');
+                sosModal.classList.remove('flex');
+            }, 300); // tempo da transição
+        }
+
+        // Fechar modal ao clicar fora
+        sosModal.addEventListener('click', (e) => {
+            if (e.target === sosModal) closeSosModal();
+        });
+
+    </script>
+</body>
+</html>
