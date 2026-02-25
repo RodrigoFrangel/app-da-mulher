@@ -18,7 +18,7 @@
     <style>
         /* Esconder scrollbar para um visual mais limpo de app */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
-        .tab-content { display: none; height: 100%; overflow-y: auto; padding-bottom: 80px; }
+        .tab-content { display: none; height: 100%; overflow-y: auto; padding-bottom: 100px; }
         .tab-content.active { display: block; }
         #map { height: 100%; width: 100%; z-index: 10; }
         
@@ -83,8 +83,8 @@
                 <img src="https://i.postimg.cc/x89HkzWv/logo-w-small.png" alt="Logo Guardiã" class="h-8 w-auto">
                 <h1 class="font-bold text-lg tracking-wide">Guardiã</h1>
             </div>
-            <!-- Imagem de perfil que leva pra página do usuário -->
-            <div class="relative cursor-pointer active:scale-95 transition-transform" onclick="switchTab('profile')">
+            <!-- Imagem de perfil que abre o Modal Menu -->
+            <div class="relative cursor-pointer active:scale-95 transition-transform" onclick="openMenuModal()">
                 <img src="https://i.pravatar.cc/100?img=11" alt="Perfil" id="header-avatar" class="w-9 h-9 rounded-full border-2 border-purple-300 object-cover">
                 <span class="absolute top-0 right-0 w-3 h-3 bg-green-400 border-2 border-purple-700 rounded-full"></span>
             </div>
@@ -169,7 +169,7 @@
                 <div id="map"></div>
                 
                 <!-- Botão Adicionar Ponto no Mapa -->
-                <button class="absolute bottom-6 right-4 z-20 bg-purple-700 text-white p-3 rounded-full shadow-lg active:scale-95">
+                <button class="absolute bottom-28 right-4 z-20 bg-purple-700 text-white p-3 rounded-full shadow-lg active:scale-95">
                     <i data-lucide="plus"></i>
                 </button>
             </div>
@@ -223,35 +223,6 @@
                 </div>
             </div>
 
-            <!-- VIEW: MENU/CONFIGURAÇÕES -->
-            <div id="view-menu" class="tab-content p-4">
-                <h2 class="font-bold text-lg mb-4">Configurações</h2>
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-100">
-                    <ul class="divide-y divide-slate-100">
-                        <li onclick="switchTab('profile')" class="p-4 flex items-center gap-3 active:bg-slate-50 cursor-pointer">
-                            <i data-lucide="user" class="text-slate-400"></i>
-                            <span class="font-medium text-sm flex-1">Meu Perfil</span>
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
-                        </li>
-                        <li class="p-4 flex items-center gap-3 active:bg-slate-50 relative cursor-pointer">
-                            <i data-lucide="car" class="text-slate-400"></i>
-                            <span class="font-medium text-sm flex-1">Modo Condutora</span>
-                            <span class="bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">WIP</span>
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
-                        </li>
-                        <li class="p-4 flex items-center gap-3 active:bg-slate-50 cursor-pointer">
-                            <i data-lucide="shield" class="text-slate-400"></i>
-                            <span class="font-medium text-sm flex-1">Privacidade (LGPD)</span>
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
-                        </li>
-                        <li onclick="doLogout()" class="p-4 flex items-center gap-3 active:bg-slate-50 text-red-600 cursor-pointer">
-                            <i data-lucide="log-out"></i>
-                            <span class="font-medium text-sm flex-1">Sair da Conta</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
             <!-- VIEW: PERFIL DO USUÁRIO -->
             <div id="view-profile" class="tab-content p-4">
                 <div class="flex items-center gap-3 mb-6">
@@ -292,35 +263,36 @@
                         </div>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
                     </button>
-                    <button onclick="doLogout()" class="w-full bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between text-red-600 font-medium active:bg-slate-50">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="log-out" class="w-5 h-5"></i> Sair da Conta
-                        </div>
-                    </button>
                 </div>
             </div>
 
         </main>
 
-        <!-- Bottom Navigation -->
-        <nav class="bg-white border-t border-slate-200 absolute bottom-0 w-full z-30 pb-safe">
-            <div class="flex justify-around items-center h-16">
-                <button onclick="switchTab('home')" class="nav-btn text-purple-700 flex flex-col items-center gap-1 w-full" data-target="home">
-                    <i data-lucide="home" class="w-6 h-6"></i>
-                    <span class="text-[10px] font-semibold">Início</span>
+        <!-- Bottom Navigation (Atrativo e Flutuante) -->
+        <nav class="absolute bottom-6 left-4 right-4 z-30 pointer-events-none">
+            <div class="bg-white/95 backdrop-blur-lg shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 rounded-3xl flex justify-around items-center h-[72px] px-2 pointer-events-auto">
+                
+                <button onclick="switchTab('home')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-purple-700 transition-colors" data-target="home">
+                    <div class="icon-wrapper p-2 rounded-2xl bg-purple-100 transition-all duration-300 mb-0.5">
+                        <i data-lucide="home" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-[10px] font-bold tracking-wide">Início</span>
                 </button>
-                <button onclick="switchTab('map')" class="nav-btn text-slate-400 flex flex-col items-center gap-1 w-full" data-target="map">
-                    <i data-lucide="map" class="w-6 h-6"></i>
-                    <span class="text-[10px] font-semibold">Mapa</span>
+                
+                <button onclick="switchTab('map')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors" data-target="map">
+                    <div class="icon-wrapper p-2 rounded-2xl bg-transparent transition-all duration-300 mb-0.5">
+                        <i data-lucide="map" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-[10px] font-bold tracking-wide">Mapa</span>
                 </button>
-                <button onclick="switchTab('feed')" class="nav-btn text-slate-400 flex flex-col items-center gap-1 w-full" data-target="feed">
-                    <i data-lucide="list" class="w-6 h-6"></i>
-                    <span class="text-[10px] font-semibold">Avisos</span>
+                
+                <button onclick="switchTab('feed')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors" data-target="feed">
+                    <div class="icon-wrapper p-2 rounded-2xl bg-transparent transition-all duration-300 mb-0.5">
+                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-[10px] font-bold tracking-wide">Feed</span>
                 </button>
-                <button onclick="switchTab('menu')" class="nav-btn text-slate-400 flex flex-col items-center gap-1 w-full" data-target="menu">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
-                    <span class="text-[10px] font-semibold">Menu</span>
-                </button>
+                
             </div>
         </nav>
 
@@ -345,6 +317,46 @@
             </div>
         </div>
 
+        <!-- Modal Menu (Abre ao clicar na foto de perfil) -->
+        <div id="menu-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex-col justify-end">
+            <div class="bg-white rounded-t-2xl p-6 transform transition-transform translate-y-full" id="menu-content">
+                <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4"></div>
+                
+                <!-- Info do Usuário no Modal -->
+                <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+                    <img src="https://i.pravatar.cc/100?img=11" id="menu-avatar" class="w-14 h-14 rounded-full border-2 border-purple-100 object-cover">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800" id="menu-user-name">Rodrigo</h3>
+                        <p class="text-sm text-slate-500" id="menu-user-email">rodrigo@exemplo.com</p>
+                    </div>
+                </div>
+
+                <h4 class="font-bold text-xs text-slate-400 uppercase tracking-wider mb-2 px-1">Configurações</h4>
+                <ul class="space-y-1 mb-4">
+                    <li onclick="switchTab('profile'); closeMenuModal()" class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-xl cursor-pointer transition-colors">
+                        <div class="bg-purple-100 p-2 rounded-lg text-purple-700"><i data-lucide="user" class="w-5 h-5"></i></div>
+                        <span class="font-semibold text-slate-700 flex-1">Meu Perfil</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                    </li>
+                    <li class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-xl relative cursor-pointer transition-colors">
+                        <div class="bg-blue-100 p-2 rounded-lg text-blue-700"><i data-lucide="car" class="w-5 h-5"></i></div>
+                        <span class="font-semibold text-slate-700 flex-1">Modo Condutora</span>
+                        <span class="bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded mr-2">WIP</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                    </li>
+                    <li class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-xl cursor-pointer transition-colors">
+                        <div class="bg-slate-100 p-2 rounded-lg text-slate-600"><i data-lucide="shield" class="w-5 h-5"></i></div>
+                        <span class="font-semibold text-slate-700 flex-1">Privacidade (LGPD)</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                    </li>
+                </ul>
+
+                <button onclick="doLogout(); closeMenuModal()" class="w-full p-4 flex items-center justify-center gap-2 text-red-600 font-bold bg-red-50 rounded-xl active:bg-red-100 transition-colors mt-2">
+                    <i data-lucide="log-out" class="w-5 h-5"></i> Sair da Conta
+                </button>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -360,19 +372,25 @@
 
         // Lógica de Autenticação (Mock)
         function doLogin() {
-            // Pega o valor digitado no input de login
             const inputValue = document.getElementById('login-input').value;
-            // Se tiver "@", usa a parte antes do @ como nome, senão usa o mock
             const userName = inputValue.includes('@') ? inputValue.split('@')[0] : mockUser.name;
             const finalName = userName.charAt(0).toUpperCase() + userName.slice(1);
 
             // Preenche os dados na interface
             document.getElementById('home-user-name').innerText = finalName;
+            
+            // Perfil View
             document.getElementById('profile-name').innerText = finalName;
             document.getElementById('profile-email').innerText = inputValue;
-            
-            document.getElementById('header-avatar').src = mockUser.avatar;
             document.getElementById('profile-avatar').src = mockUser.avatar;
+            
+            // Menu Modal
+            document.getElementById('menu-user-name').innerText = finalName;
+            document.getElementById('menu-user-email').innerText = inputValue;
+            document.getElementById('menu-avatar').src = mockUser.avatar;
+            
+            // Header
+            document.getElementById('header-avatar').src = mockUser.avatar;
 
             // Transição de telas
             document.getElementById('login-screen').classList.add('hidden');
@@ -391,7 +409,7 @@
             document.getElementById('login-screen').classList.remove('hidden');
         }
 
-        // Lógica de Tabs
+        // Lógica de Tabs e Bottom Nav
         let mapInitialized = false;
         let map;
 
@@ -401,12 +419,21 @@
             // Mostrar a selecionada
             document.getElementById('view-' + tabId).classList.add('active');
 
-            // Atualizar cores dos botões na nav (o 'profile' não tem botão na nav)
+            // Atualizar cores e fundos dos botões na nav
             document.querySelectorAll('.nav-btn').forEach(btn => {
+                const iconWrapper = btn.querySelector('.icon-wrapper');
                 if(btn.dataset.target === tabId) {
                     btn.classList.replace('text-slate-400', 'text-purple-700');
+                    if(iconWrapper) {
+                        iconWrapper.classList.remove('bg-transparent');
+                        iconWrapper.classList.add('bg-purple-100');
+                    }
                 } else {
                     btn.classList.replace('text-purple-700', 'text-slate-400');
+                    if(iconWrapper) {
+                        iconWrapper.classList.remove('bg-purple-100');
+                        iconWrapper.classList.add('bg-transparent');
+                    }
                 }
             });
 
@@ -417,72 +444,65 @@
                         initMap();
                         mapInitialized = true;
                     } else {
-                        map.invalidateSize(); // Corrige renderização se a tab estava oculta
+                        map.invalidateSize();
                     }
                 }, 100);
             }
         }
 
-        // Lógica do Mapa (Leaflet focado em Sorocaba)
+        // Lógica do Mapa
         function initMap() {
-            // Coordenadas centrais de Sorocaba
             const sorocabaCoords = [-23.5015, -47.4581];
-            
-            map = L.map('map', {
-                zoomControl: false // removido para visual mais limpo em mobile
-            }).setView(sorocabaCoords, 13);
-
+            map = L.map('map', { zoomControl: false }).setView(sorocabaCoords, 13);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
             }).addTo(map);
 
-            // Ícones customizados
-            const dangerIcon = L.divIcon({
-                html: `<div style="background-color: #dc2626; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
-                className: ''
-            });
+            const dangerIcon = L.divIcon({ html: `<div style="background-color: #dc2626; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`, className: '' });
+            const safeIcon = L.divIcon({ html: `<div style="background-color: #16a34a; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`, className: '' });
+            const ongIcon = L.divIcon({ html: `<div style="background-color: #7e22ce; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`, className: '' });
 
-            const safeIcon = L.divIcon({
-                html: `<div style="background-color: #16a34a; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
-                className: ''
-            });
-
-            const ongIcon = L.divIcon({
-                html: `<div style="background-color: #7e22ce; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
-                className: ''
-            });
-
-            // Adicionar alguns marcadores mockados de Sorocaba
             L.marker([-23.5120, -47.4650], {icon: dangerIcon}).addTo(map).bindPopup('Atenção: Área mal iluminada');
             L.marker([-23.4950, -47.4510], {icon: safeIcon}).addTo(map).bindPopup('Ponto Seguro Verificado');
             L.marker([-23.5050, -47.4580], {icon: ongIcon}).addTo(map).bindPopup('ONG Apoio à Mulher');
         }
 
-        // Lógica do Modal SOS
+        // Lógica dos Modais (SOS e Menu)
         const sosModal = document.getElementById('sos-modal');
         const sosContent = document.getElementById('sos-content');
+        
+        const menuModal = document.getElementById('menu-modal');
+        const menuContent = document.getElementById('menu-content');
 
+        // Controles Modal SOS
         function openSosModal() {
             sosModal.classList.remove('hidden');
             sosModal.classList.add('flex');
-            // Pequeno delay para a animação do bottom sheet
-            setTimeout(() => {
-                sosContent.classList.remove('translate-y-full');
-            }, 10);
+            setTimeout(() => sosContent.classList.remove('translate-y-full'), 10);
         }
-
         function closeSosModal() {
             sosContent.classList.add('translate-y-full');
             setTimeout(() => {
                 sosModal.classList.add('hidden');
                 sosModal.classList.remove('flex');
-            }, 300); // tempo da transição
+            }, 300);
         }
+        sosModal.addEventListener('click', (e) => { if (e.target === sosModal) closeSosModal(); });
 
-        // Fechar modal ao clicar fora
-        sosModal.addEventListener('click', (e) => {
-            if (e.target === sosModal) closeSosModal();
-        });
+        // Controles Modal Menu
+        function openMenuModal() {
+            menuModal.classList.remove('hidden');
+            menuModal.classList.add('flex');
+            setTimeout(() => menuContent.classList.remove('translate-y-full'), 10);
+        }
+        function closeMenuModal() {
+            menuContent.classList.add('translate-y-full');
+            setTimeout(() => {
+                menuModal.classList.add('hidden');
+                menuModal.classList.remove('flex');
+            }, 300);
+        }
+        menuModal.addEventListener('click', (e) => { if (e.target === menuModal) closeMenuModal(); });
 
     </script>
 </body>
