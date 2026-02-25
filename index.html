@@ -78,22 +78,13 @@
     <div id="app-container" class="hidden w-full max-w-md bg-white shadow-2xl h-full flex-col relative overflow-hidden">
         
         <!-- Header -->
-        <header class="bg-purple-700 text-white p-6 pb-5 shadow-lg z-20 rounded-b-3xl shrink-0">
+        <header id="main-header" class="bg-purple-700 text-white p-6 pb-5 shadow-lg z-20 rounded-b-3xl shrink-0 transition-all duration-300 ease-in-out">
             <div class="flex justify-between items-start">
                 
-                <!-- Avatar & Textos (Esquerda) -->
-                <div class="flex flex-col gap-3">
-                    <!-- Imagem de perfil que abre o Modal Menu -->
-                    <div class="relative cursor-pointer w-fit active:scale-95 transition-transform" onclick="openMenuModal()">
-                        <img src="https://i.pravatar.cc/100?img=5" alt="Perfil" id="header-avatar" class="w-12 h-12 rounded-full border-2 border-purple-300 object-cover shadow-sm">
-                        <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-green-400 border-2 border-purple-700 rounded-full"></span>
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-2xl tracking-wide leading-tight">Olá, <span id="header-user-name">Usuário</span></h1>
-                        <p class="text-xs font-medium text-purple-200 flex items-center gap-1 mt-1">
-                            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Sorocaba, SP
-                        </p>
-                    </div>
+                <!-- Avatar -->
+                <div class="relative cursor-pointer w-fit active:scale-95 transition-transform" onclick="openMenuModal()">
+                    <img src="https://i.pravatar.cc/100?img=5" alt="Perfil" id="header-avatar" class="w-12 h-12 rounded-full border-2 border-purple-300 object-cover shadow-sm transition-all duration-300">
+                    <span id="header-status" class="absolute top-0 right-0 w-3.5 h-3.5 bg-green-400 border-2 border-purple-700 rounded-full transition-all duration-300"></span>
                 </div>
 
                 <!-- Ícones de Ação (Direita) -->
@@ -107,6 +98,14 @@
                     </button>
                 </div>
 
+            </div>
+
+            <!-- Textos (Expandíveis) -->
+            <div id="header-text-container" class="mt-3 overflow-hidden transition-all duration-300 max-h-20 opacity-100">
+                <h1 class="font-bold text-2xl tracking-wide leading-tight">Olá, <span id="header-user-name">Usuário</span></h1>
+                <p class="text-xs font-medium text-purple-200 flex items-center gap-1 mt-1">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Sorocaba, SP
+                </p>
             </div>
         </header>
 
@@ -145,11 +144,21 @@
                 <!-- Alertas Próximos -->
                 <div>
                     <h2 class="font-bold text-slate-700 mb-3 flex items-center gap-2">
-                        <i data-lucide="bell-ring" class="w-5 h-5"></i> Alertas na tua zona
+                        <i data-lucide="bell-ring" class="w-5 h-5"></i> Alertas na sua área
                     </h2>
                     <div class="space-y-3">
                         <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-start gap-3">
-                            <div class="bg-yellow-100 p-2 rounded-xl text-yellow-600">
+                            <div class="bg-red-100 p-2 rounded-xl text-red-600 shrink-0">
+                                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800">Atividade suspeita</h3>
+                                <p class="text-xs text-slate-500">Terminal Santo Antônio (Há 2 min)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-start gap-3">
+                            <div class="bg-yellow-100 p-2 rounded-xl text-yellow-600 shrink-0">
                                 <i data-lucide="lightbulb-off" class="w-5 h-5"></i>
                             </div>
                             <div>
@@ -157,8 +166,19 @@
                                 <p class="text-xs text-slate-500">Av. Afonso Vergueiro (Há 10 min)</p>
                             </div>
                         </div>
+
+                        <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-start gap-3">
+                            <div class="bg-orange-100 p-2 rounded-xl text-orange-600 shrink-0">
+                                <i data-lucide="message-square-warning" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800">Assédio verbal relatado</h3>
+                                <p class="text-xs text-slate-500">Praça Coronel Fernando Prestes (Há 45 min)</p>
+                            </div>
+                        </div>
+
                         <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-start gap-3 relative overflow-hidden">
-                            <div class="bg-blue-100 p-2 rounded-xl text-blue-600">
+                            <div class="bg-blue-100 p-2 rounded-xl text-blue-600 shrink-0">
                                 <i data-lucide="car" class="w-5 h-5"></i>
                             </div>
                             <div>
@@ -166,6 +186,16 @@
                                 <p class="text-xs text-slate-500">Procura motoristas verificadas.</p>
                             </div>
                             <span class="absolute top-2 right-2 bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">WIP</span>
+                        </div>
+
+                        <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-start gap-3">
+                            <div class="bg-green-100 p-2 rounded-xl text-green-600 shrink-0">
+                                <i data-lucide="check-circle" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800">Iluminação restaurada</h3>
+                                <p class="text-xs text-slate-500">Parque Campolim (Ontem)</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -476,7 +506,8 @@
             // Esconder todas as views
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             // Mostrar a selecionada
-            document.getElementById('view-' + tabId).classList.add('active');
+            const activeTab = document.getElementById('view-' + tabId);
+            activeTab.classList.add('active');
 
             // Atualizar cores e fundos dos botões na nav (Agora adaptado para fundo roxo)
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -496,6 +527,11 @@
                 }
             });
 
+            // Disparar evento de scroll para sincronizar o estado do header
+            setTimeout(() => {
+                activeTab.dispatchEvent(new Event('scroll'));
+            }, 10);
+
             // Inicializar mapa apenas quando a tab for clicada pela primeira vez
             if (tabId === 'map') {
                 setTimeout(() => {
@@ -508,6 +544,38 @@
                 }, 100);
             }
         }
+
+        // Lógica do Header Retrátil
+        const mainHeader = document.getElementById('main-header');
+        const headerTextContainer = document.getElementById('header-text-container');
+        const headerAvatar = document.getElementById('header-avatar');
+        const headerStatus = document.getElementById('header-status');
+
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.addEventListener('scroll', (e) => {
+                if (e.target.scrollTop > 30) {
+                    // Header contraído
+                    headerTextContainer.classList.remove('max-h-20', 'opacity-100', 'mt-3');
+                    headerTextContainer.classList.add('max-h-0', 'opacity-0', 'mt-0');
+                    mainHeader.classList.remove('p-6', 'pb-5');
+                    mainHeader.classList.add('p-4', 'pb-4');
+                    headerAvatar.classList.remove('w-12', 'h-12');
+                    headerAvatar.classList.add('w-10', 'h-10');
+                    headerStatus.classList.replace('w-3.5', 'w-3');
+                    headerStatus.classList.replace('h-3.5', 'h-3');
+                } else {
+                    // Header expandido
+                    headerTextContainer.classList.remove('max-h-0', 'opacity-0', 'mt-0');
+                    headerTextContainer.classList.add('max-h-20', 'opacity-100', 'mt-3');
+                    mainHeader.classList.remove('p-4', 'pb-4');
+                    mainHeader.classList.add('p-6', 'pb-5');
+                    headerAvatar.classList.remove('w-10', 'h-10');
+                    headerAvatar.classList.add('w-12', 'h-12');
+                    headerStatus.classList.replace('w-3', 'w-3.5');
+                    headerStatus.classList.replace('h-3', 'h-3.5');
+                }
+            });
+        });
 
         // Lógica do Mapa
         function initMap() {
