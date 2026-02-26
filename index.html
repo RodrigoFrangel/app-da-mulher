@@ -37,6 +37,25 @@
             100% { box-shadow: 0 0 0 0 rgba(147, 51, 234, 0); }
         }
         .sharing-active { animation: pulse-purple 2s infinite; border-color: #9333ea !important; }
+    /* Dark mode removed (functionality deprecated). Button left as WIP in menu. */
+        /* Skeleton / progress animations para carregamento */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f3f4f6 25%, #e6e6e9 37%, #f3f4f6 63%);
+            background-size: 400% 100%;
+            animation: shimmer 1s linear infinite;
+        }
+        .loading-progress {
+            height: 6px; background: linear-gradient(90deg,#a78bfa,#7c3aed); border-radius: 999px; width: 0%;
+            box-shadow: 0 4px 12px rgba(124,58,237,0.18);
+            transition: width 0.8s cubic-bezier(.2,.9,.2,1);
+        }
+        /* Quick report button animation */
+        #home-report-btn { transform: translateY(0); transition: transform .28s ease, opacity .28s ease; }
+        #home-report-btn.hidden { opacity: 0; transform: translateY(-6px); }
     </style>
 </head>
 <body class="bg-gray-100 flex justify-center h-[100dvh] overflow-hidden text-slate-800 relative">
@@ -46,6 +65,28 @@
         <i data-lucide="info" class="w-4 h-4"></i>
         <span id="toast-message">Mensagem</span>
     </div>
+    <!-- Overlay de carregamento exibido após clicar em Entrar (splash + progresso + skeleton) -->
+    <div id="login-loading-overlay" class="fixed inset-0 bg-white/95 z-50 hidden items-center justify-center flex-col">
+        <div class="w-full max-w-md p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <img src="https://i.postimg.cc/d3Jd7yz7/logo.png" alt="Logo" class="h-12 w-auto">
+                <div class="flex-1">
+                    <div class="h-4 w-3/4 rounded-full skeleton mb-2"></div>
+                    <div class="h-3 w-1/2 rounded-full skeleton"></div>
+                </div>
+            </div>
+            <div class="bg-slate-100 rounded-full p-1">
+                <div id="login-progress" class="loading-progress" style="width: 0%"></div>
+            </div>
+
+            <div class="mt-6 space-y-2">
+                <div class="h-3 w-full rounded-xl skeleton"></div>
+                <div class="h-3 w-5/6 rounded-xl skeleton"></div>
+                <div class="h-3 w-2/3 rounded-xl skeleton"></div>
+            </div>
+            <div class="text-center text-slate-700 font-bold mt-4">Iniciando Guardiã...</div>
+        </div>
+    </div>
 
     <!-- TELA DE LOGIN (Inicialmente visível) -->
     <div id="login-screen" class="w-full max-w-md bg-white shadow-2xl h-full flex flex-col items-center justify-center p-8 relative overflow-hidden z-50">
@@ -53,10 +94,9 @@
         <div class="absolute bottom-[-100px] right-[-100px] w-64 h-64 bg-purple-200 rounded-full blur-3xl opacity-50"></div>
         
         <div class="mb-10 flex flex-col items-center z-10">
-            <div class="bg-purple-700 p-3 rounded-2xl shadow-lg mb-4">
-                <img src="https://i.postimg.cc/x89HkzWv/logo-w-small.png" alt="Logo Guardiã" class="h-14 w-auto">
+            <div class="mb-4">
+                <img src="https://i.postimg.cc/d3Jd7yz7/logo.png" alt="Logo Guardiã" class="h-[150px] w-auto">
             </div>
-            <h1 class="font-bold text-3xl text-slate-800 tracking-tight">Guardiã</h1>
             <p class="text-slate-500 text-sm mt-2 text-center">A sua rede de segurança hiperlocal em Sorocaba.</p>
         </div>
 
@@ -126,6 +166,11 @@
             </div>
         </header>
 
+        <!-- Botão de denunciar rápido (aparece apenas na tela Início) -->
+        <button id="home-report-btn" onclick="openModal('aggression')" class="hidden absolute top-[92px] right-4 z-30 bg-red-600 text-white p-3 rounded-full shadow-lg active:scale-95" title="Denunciar">
+            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+        </button>
+
         <!-- VIEWS -->
         <main class="flex-1 relative bg-slate-50 min-h-0">
             
@@ -165,9 +210,9 @@
                     </h2>
                     <div class="space-y-3">
                         <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-start gap-3">
-                            <div class="bg-red-100 p-2 rounded-xl text-red-600 shrink-0">
-                                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
-                            </div>
+                                        <div class="shrink-0 text-red-600">
+                                            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                                        </div>
                             <div>
                                 <h3 class="font-bold text-sm text-slate-800">Atividade suspeita</h3>
                                 <p class="text-xs text-slate-500">Terminal Santo Antônio (Há 2 min)</p>
@@ -175,7 +220,7 @@
                         </div>
                         
                         <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-start gap-3">
-                            <div class="bg-yellow-100 p-2 rounded-xl text-yellow-600 shrink-0">
+                            <div class="shrink-0 text-yellow-600">
                                 <i data-lucide="lightbulb-off" class="w-5 h-5"></i>
                             </div>
                             <div>
@@ -186,7 +231,7 @@
 
                         <!-- Novos exemplos de alertas -->
                         <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-start gap-3">
-                            <div class="bg-green-100 p-2 rounded-xl text-green-600 shrink-0">
+                            <div class="shrink-0 text-green-600">
                                 <i data-lucide="check-circle" class="w-5 h-5"></i>
                             </div>
                             <div>
@@ -196,7 +241,7 @@
                         </div>
 
                         <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-start gap-3">
-                            <div class="bg-blue-100 p-2 rounded-xl text-blue-600 shrink-0">
+                            <div class="shrink-0 text-blue-600">
                                 <i data-lucide="info" class="w-5 h-5"></i>
                             </div>
                             <div>
@@ -206,7 +251,7 @@
                         </div>
 
                         <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-start gap-3">
-                            <div class="bg-orange-100 p-2 rounded-xl text-orange-600 shrink-0">
+                            <div class="shrink-0 text-orange-600">
                                 <i data-lucide="camera-off" class="w-5 h-5"></i>
                             </div>
                             <div>
@@ -220,25 +265,39 @@
 
             <!-- VIEW: MAPA -->
             <div id="view-map" class="tab-content relative">
-                <!-- Filtros flutuantes sobre o mapa -->
-                <div class="absolute top-2 left-2 right-2 z-20 flex gap-2 overflow-x-auto pb-2 drop-shadow-md">
-                    <button class="bg-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 border border-slate-200 text-red-600 shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-red-600"></span> Risco
-                    </button>
-                    <button class="bg-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 border border-slate-200 text-green-600 shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-green-600"></span> Seguro
-                    </button>
-                    <button class="bg-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 border border-slate-200 text-purple-600 shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-purple-600"></span> ONGs/Apoio
-                    </button>
+                <!-- Legend badges (top-left) -->
+                <div class="absolute top-2 left-2 z-20 flex gap-2 items-center">
+                    <div class="bg-white px-3 py-2 rounded-2xl text-xs font-bold flex items-center gap-2 shadow-sm border border-slate-100">
+                        <span class="w-2.5 h-2.5 rounded-full bg-red-600"></span> Alto Risco
+                    </div>
+                    <div class="bg-white px-3 py-2 rounded-2xl text-xs font-bold flex items-center gap-2 shadow-sm border border-slate-100">
+                        <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 border border-yellow-500"></span> Moderado
+                    </div>
+                    <div class="bg-white px-3 py-2 rounded-2xl text-xs font-bold flex items-center gap-2 shadow-sm border border-slate-100">
+                        <span class="w-2.5 h-2.5 rounded-full bg-green-600"></span> Seguro
+                    </div>
                 </div>
                 
                 <div id="map"></div>
-                
-                <!-- Botão Adicionar Ponto no Mapa -->
-                <button class="absolute bottom-28 right-4 z-20 bg-purple-700 text-white p-3.5 rounded-full shadow-lg active:scale-95">
-                    <i data-lucide="plus" class="w-6 h-6"></i>
+
+                <!-- Filtro (buscar bairro) - toggle no botão de filtro (top-right) -->
+                <div id="map-filter" class="absolute top-16 right-3 z-30 hidden w-72 bg-white p-3 rounded-2xl border border-slate-100 shadow-lg">
+                    <h4 class="font-bold text-sm mb-2">Filtro</h4>
+                    <div class="text-xs text-slate-600 mb-3">Buscar um bairro por nome</div>
+                    <div class="flex gap-2 items-center">
+                        <!-- min-w-0 on input allows proper flex shrinking inside a fixed-width container -->
+                        <input id="neighborhood-input" type="text" placeholder="Ex: Wanel Ville" class="flex-1 min-w-0 p-2 border border-slate-100 rounded-md text-sm" />
+                        <!-- prevent the button from shrinking and ensure it stays on the same row -->
+                        <button id="neighborhood-search" class="flex-shrink-0 bg-purple-700 text-white px-3 py-2 rounded-md text-sm">Buscar</button>
+                    </div>
+                </div>
+
+                <!-- Filter button (top-right) -->
+                <button id="legend-toggle" class="absolute top-3 right-3 z-30 bg-white text-slate-700 p-2 rounded-full shadow-md active:scale-95" title="Filtro">
+                    <i data-lucide="filter" class="w-5 h-5"></i>
                 </button>
+
+                <!-- botão de adicionar removido conforme solicitado -->
             </div>
 
             <!-- VIEW: FEED -->
@@ -251,7 +310,7 @@
                 </div>
 
                 <!-- Botão de Criar Novo Post -->
-                <button onclick="showToast('Abrindo modal de criação de alerta...')" class="w-full bg-white p-4 rounded-3xl shadow-sm border border-slate-100 mb-6 flex items-center gap-3 text-slate-500 active:scale-[0.98] transition-transform">
+                <button onclick="openModal('create-post')" class="w-full bg-white p-4 rounded-3xl shadow-sm border border-slate-100 mb-6 flex items-center gap-3 text-slate-500 active:scale-[0.98] transition-transform">
                     <img src="https://i.pravatar.cc/100?img=5" id="feed-input-avatar" class="w-10 h-10 rounded-full border border-slate-200 object-cover">
                     <span class="flex-1 text-left text-sm font-medium">Relatar algo na sua área...</span>
                     <div class="p-2 bg-purple-50 rounded-full text-purple-600">
@@ -287,8 +346,8 @@
                 <!-- Input para comentar -->
                 <div class="fixed bottom-[88px] w-full max-w-md bg-white border-t border-slate-200 p-3 flex items-center gap-2 px-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                     <img src="https://i.pravatar.cc/100?img=5" class="w-8 h-8 rounded-full border border-slate-200">
-                    <input type="text" placeholder="Adicione um comentário..." class="flex-1 bg-slate-100 text-sm rounded-full px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-purple-500">
-                    <button onclick="showToast('Comentário enviado!')" class="text-purple-600 p-2 active:scale-95">
+                    <input id="post-comment-input" type="text" placeholder="Adicione um comentário..." class="flex-1 bg-slate-100 text-sm rounded-full px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-purple-500">
+                    <button onclick="submitComment()" class="text-purple-600 p-2 active:scale-95">
                         <i data-lucide="send" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -392,28 +451,25 @@
         </main>
 
         <!-- Bottom Navigation -->
-        <nav class="absolute bottom-6 left-1/2 -translate-x-1/2 w-[85%] max-w-[320px] z-30 pointer-events-none">
-            <div class="bg-purple-700/95 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.3)] border border-purple-600 rounded-full flex justify-around items-center h-[64px] px-2 pointer-events-auto">
+        <nav class="absolute bottom-6 left-1/2 -translate-x-1/2 w-[230px] max-w-[230px] z-30 pointer-events-none">
+        <div class="bg-purple-700/95 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.3)] border border-purple-600 rounded-full flex justify-between items-center h-[56px] px-2 pointer-events-auto">
                 
-                <button onclick="switchTab('home')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-white transition-colors" data-target="home">
-                    <div class="icon-wrapper p-1.5 rounded-full bg-white/20 transition-all duration-300 mb-0.5">
-                        <i data-lucide="home" class="w-5 h-5"></i>
+                <button onclick="switchTab('home')" class="nav-btn group flex items-center justify-center w-full h-full text-white transition-colors" data-target="home" aria-label="Início">
+                    <div class="icon-wrapper p-2 rounded-full bg-white/20 transition-all duration-300">
+                        <i data-lucide="home" class="w-6 h-6"></i>
                     </div>
-                    <span class="text-[10px] font-bold tracking-wide">Início</span>
                 </button>
                 
-                <button onclick="switchTab('map')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-purple-300 transition-colors" data-target="map">
-                    <div class="icon-wrapper p-1.5 rounded-full bg-transparent transition-all duration-300 mb-0.5">
-                        <i data-lucide="map" class="w-5 h-5"></i>
+                <button onclick="switchTab('map')" class="nav-btn group flex items-center justify-center w-full h-full text-purple-300 transition-colors" data-target="map" aria-label="Mapa">
+                    <div class="icon-wrapper p-2 rounded-full bg-transparent transition-all duration-300">
+                        <i data-lucide="map" class="w-6 h-6"></i>
                     </div>
-                    <span class="text-[10px] font-bold tracking-wide">Mapa</span>
                 </button>
                 
-                <button onclick="switchTab('feed')" class="nav-btn group flex flex-col items-center justify-center w-full h-full text-purple-300 transition-colors" data-target="feed">
-                    <div class="icon-wrapper p-1.5 rounded-full bg-transparent transition-all duration-300 mb-0.5">
-                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                <button onclick="switchTab('feed')" class="nav-btn group flex items-center justify-center w-full h-full text-purple-300 transition-colors" data-target="feed" aria-label="Feed">
+                    <div class="icon-wrapper p-2 rounded-full bg-transparent transition-all duration-300">
+                        <i data-lucide="message-square" class="w-6 h-6"></i>
                     </div>
-                    <span class="text-[10px] font-bold tracking-wide">Feed</span>
                 </button>
                 
             </div>
@@ -480,6 +536,62 @@
             </div>
         </div>
 
+        <!-- Modal Criar Post -->
+        <div id="create-post-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex-col justify-end backdrop-blur-sm">
+            <div class="bg-white rounded-t-[2rem] p-6 transform transition-transform translate-y-full" id="create-post-content">
+                <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4"></div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Novo Alerta / Relato</h3>
+                <p class="text-sm text-slate-500 mb-4">Compartilhe algo que aconteceu ou um local que precisa de atenção.</p>
+
+                <div class="space-y-3">
+                    <label class="text-sm font-bold">Categoria</label>
+                    <select id="new-post-category" class="w-full p-3 border border-slate-200 rounded-xl">
+                        <option>ASSÉDIO</option>
+                        <option>ATENÇÃO</option>
+                        <option>LOCAL SEGURO</option>
+                        <option>ILUMINAÇÃO</option>
+                    </select>
+
+                    <label class="text-sm font-bold">Local (opcional)</label>
+                    <input id="new-post-location" type="text" class="w-full p-3 border border-slate-200 rounded-xl" placeholder="Ex: Rua Tal, Bairro" />
+
+                    <label class="text-sm font-bold">Descreva o ocorrido</label>
+                    <textarea id="new-post-content" rows="4" class="w-full p-3 border border-slate-200 rounded-xl" placeholder="Escreva aqui..."></textarea>
+                </div>
+
+                <button onclick="createPost()" class="w-full bg-purple-700 text-white text-center font-bold py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-95 transition-transform mt-4">
+                    Publicar
+                </button>
+                <button onclick="closeModal('create-post')" class="block w-full bg-slate-100 text-slate-700 text-center font-bold py-4 rounded-2xl mt-3 active:scale-95">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Denúncia de Agressão (específico) -->
+        <div id="aggression-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex-col justify-end backdrop-blur-sm">
+            <div class="bg-white rounded-t-[2rem] p-6 transform transition-transform translate-y-full" id="aggression-content">
+                <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4"></div>
+                <h3 class="text-xl font-bold text-red-600 mb-2">Denunciar Agressão</h3>
+                <p class="text-sm text-slate-500 mb-4">Use este formulário para enviar informações sobre uma agressão contra mulher. Sua denúncia será encaminhada à equipe responsável.</p>
+
+                <div class="space-y-3">
+                    <label class="text-sm font-bold">Local</label>
+                    <input id="aggr-location" type="text" class="w-full p-3 border border-slate-200 rounded-xl" placeholder="Endereço, ponto de referência" />
+
+                    <label class="text-sm font-bold">Descrição</label>
+                    <textarea id="aggr-desc" rows="4" class="w-full p-3 border border-slate-200 rounded-xl" placeholder="Informações sobre o ocorrido, horários, testemunhas..."></textarea>
+                </div>
+
+                <button onclick="submitAggressionReport()" class="w-full bg-red-600 text-white text-center font-bold py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-95 transition-transform mt-4">
+                    Enviar Denúncia
+                </button>
+                <button onclick="closeModal('aggression')" class="block w-full bg-slate-100 text-slate-700 text-center font-bold py-4 rounded-2xl mt-3 active:scale-95">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+
         <!-- Modal Menu -->
         <div id="menu-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex-col justify-end backdrop-blur-sm">
             <div class="bg-white rounded-t-[2rem] p-6 transform transition-transform translate-y-full" id="menu-content">
@@ -508,17 +620,17 @@
                         <span class="font-bold text-slate-700 flex-1">Contatos Seguros</span>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
                     </li>
-                    <li class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-2xl relative cursor-pointer transition-colors">
-                        <div class="bg-blue-100 p-2.5 rounded-xl text-blue-700"><i data-lucide="car" class="w-5 h-5"></i></div>
-                        <span class="font-bold text-slate-700 flex-1">Modo Condutora</span>
-                        <span class="bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md mr-2">WIP</span>
+                    <li onclick="openModal('aggression'); closeModal('menu')" class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-2xl cursor-pointer transition-colors">
+                        <div class="bg-red-100 p-2.5 rounded-xl text-red-700"><i data-lucide="shield-alert" class="w-5 h-5"></i></div>
+                        <span class="font-bold text-slate-700 flex-1">Denunciar Agressão</span>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
                     </li>
-                    <li class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-2xl cursor-pointer transition-colors">
-                        <div class="bg-slate-100 p-2.5 rounded-xl text-slate-600"><i data-lucide="shield" class="w-5 h-5"></i></div>
-                        <span class="font-bold text-slate-700 flex-1">Privacidade (LGPD)</span>
+                    <li onclick="closeModal('menu')" class="p-3 flex items-center gap-4 hover:bg-slate-50 active:bg-slate-100 rounded-2xl cursor-pointer transition-colors">
+                        <div class="bg-slate-100 p-2.5 rounded-xl text-slate-600"><i data-lucide="moon" class="w-5 h-5"></i></div>
+                        <span id="dark-mode-label" class="font-bold text-slate-700 flex-1">Modo Escuro (WIP)</span>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
                     </li>
+                    
                 </ul>
 
                 <button onclick="doLogout(); closeModal('menu')" class="w-full p-4 flex items-center justify-center gap-2 text-red-600 font-bold bg-red-50 rounded-2xl active:bg-red-100 transition-colors mt-2">
@@ -595,19 +707,31 @@
             { id: 1, author: "Anônimo", avatar: null, verified: false, time: "Hoje, 18:30", location: "Parque Campolim", category: "ASSÉDIO", color: "red", content: "Indivíduo suspeito perto da pista de caminhada. Já avisei a GCM, tomem cuidado ao passar por ali sozinhas.", likes: 12, comments: 3, liked: false },
             { id: 2, author: "Carla T.", avatar: "https://i.pravatar.cc/100?img=43", verified: true, time: "Hoje, 14:15", location: "Zona Norte", category: "ATENÇÃO", color: "orange", content: "Carro cinza rondando o ponto da Avenida Itavuvu perto do shopping faz uns 20 minutos. Fiquem atentas!", likes: 45, comments: 12, liked: true },
             { id: 3, author: "Ana Costa", avatar: "https://i.pravatar.cc/100?img=9", verified: true, time: "Ontem", location: "Centro", category: "LOCAL SEGURO", color: "green", content: "Avaliação do ponto de ônibus do Terminal Santo Antônio. Bem iluminado e com seguranças rodando o tempo todo.", likes: 110, comments: 8, liked: false, beta: true },
-            { id: 4, author: "Beatriz", avatar: "https://i.pravatar.cc/100?img=32", verified: false, time: "Ontem", location: "Além Ponte", category: "ILUMINAÇÃO", color: "blue", content: "Meninas, finalmente arrumaram a luz do poste na rua da faculdade! Voltar pra casa à noite tá muito mais seguro agora. 🙏", likes: 89, comments: 5, liked: false }
+            { id: 4, author: "Beatriz", avatar: "https://i.pravatar.cc/100?img=32", verified: false, time: "Ontem", location: "Wanel Ville", category: "ILUMINAÇÃO", color: "blue", content: "Meninas, finalmente arrumaram a luz do poste na rua da faculdade! Voltar pra casa à noite tá muito mais seguro agora. 🙏", likes: 89, comments: 5, liked: false },
+            { id: 5, author: "Lúcia", avatar: "https://i.pravatar.cc/100?img=12", verified: false, time: "Hoje, 07:40", location: "Vila Hortência", category: "ATENÇÃO", color: "orange", content: "Homem pedindo informações e tentando entrar nos carros no estacionamento da escola. Cuidado ao deixar crianças sozinhas.", likes: 7, comments: 2, liked: false },
+            { id: 6, author: "Polícia Local", avatar: "https://i.pravatar.cc/100?img=15", verified: true, time: "Hoje, 06:20", location: "Terminal Santo Antônio", category: "INFO", color: "green", content: "Operação preventiva nesta madrugada com rondas reforçadas. Qualquer ocorrência ligue 190.", likes: 22, comments: 4, liked: false },
+            { id: 7, author: "Mariana S.", avatar: "https://i.pravatar.cc/100?img=52", verified: false, time: "Ontem, 22:10", location: "Rua da Faculdade", category: "ILUMINAÇÃO", color: "blue", content: "Poste novo instalado na esquina, muita diferença no trajeto noturno.", likes: 34, comments: 6, liked: true },
+            { id: 8, author: "Equipe ONG", avatar: "https://i.pravatar.cc/100?img=22", verified: true, time: "Hoje, 12:00", location: "Centro Cultural", category: "EVENTO", color: "purple", content: "Roda de conversa hoje às 18h sobre segurança comunitária. Tragam amigas e vizinhas.", likes: 15, comments: 3, liked: false },
+            { id: 9, author: "Sofia", avatar: "https://i.pravatar.cc/100?img=34", verified: false, time: "Há 3 dias", location: "Parque Campolim", category: "ATENÇÃO", color: "orange", content: "Tentativa de furto no parquinho — fiquem de olho nas bolsas e mochilas.", likes: 5, comments: 1, liked: false },
+            { id: 10, author: "Rosa", avatar: "https://i.pravatar.cc/100?img=44", verified: false, time: "Hoje, 09:30", location: "Av. São Paulo", category: "LOCAL SEGURO", color: "green", content: "Pessoal, o ponto de ônibus em frente à padaria tem iluminação e banco novo. Recomendo!", likes: 48, comments: 9, liked: true }
         ];
 
         const mockComments = [
             { author: "Júlia", avatar: "https://i.pravatar.cc/100?img=1", time: "Há 2 horas", content: "Nossa, que perigo! Obrigada por avisar.", verified: false },
-            { author: "Camila (GCM)", avatar: "https://i.pravatar.cc/100?img=2", time: "Há 1 hora", content: "Uma viatura já foi deslocada para a região. Permaneçam atentas.", verified: true }
+            { author: "Camila (GCM)", avatar: "https://i.pravatar.cc/100?img=2", time: "Há 1 hora", content: "Uma viatura já foi deslocada para a região. Permaneçam atentas.", verified: true },
+            { author: "Paula", avatar: "https://i.pravatar.cc/100?img=7", time: "Há 30 min", content: "Alguém sabe se o ponto tem câmera?", verified: false },
+            { author: "GCM (Santo Antônio)", avatar: "https://i.pravatar.cc/100?img=6", time: "Há 10 min", content: "Equipe em patrulha até as 02:00. Qualquer novidade avisem aqui.", verified: true },
+            { author: "Fernanda", avatar: "https://i.pravatar.cc/100?img=11", time: "Ontem", content: "Boa notícia! Obrigada pelo aviso e pela atenção da comunidade.", verified: false }
         ];
 
         const mockNotifications = [
             { id: 1, icon: 'shield-alert', bg: 'bg-red-100', color: 'text-red-600', text: 'Novo alerta de assédio na sua região (Parque Campolim).', time: 'Há 5 min', unread: true },
             { id: 2, icon: 'user-check', bg: 'bg-green-100', color: 'text-green-600', text: 'Sua mãe aceitou seu convite para ser um Contato Seguro.', time: 'Há 2h', unread: true },
             { id: 3, icon: 'message-circle', bg: 'bg-purple-100', color: 'text-purple-600', text: 'Ana Costa comentou na sua avaliação de local.', time: 'Ontem', unread: false },
-            { id: 4, icon: 'map-pin', bg: 'bg-blue-100', color: 'text-blue-600', text: 'O compartilhamento de localização foi encerrado automaticamente.', time: 'Ontem', unread: false }
+            { id: 4, icon: 'map-pin', bg: 'bg-blue-100', color: 'text-blue-600', text: 'O compartilhamento de localização foi encerrado automaticamente.', time: 'Ontem', unread: false },
+            { id: 5, icon: 'map', bg: 'bg-yellow-100', color: 'text-yellow-600', text: 'Nova área de atenção mapeada em Wanel Ville.', time: 'Há 1 dia', unread: false },
+            { id: 6, icon: 'calendar', bg: 'bg-purple-100', color: 'text-purple-600', text: 'Roda de conversa: segurança comunitária hoje às 18h.', time: 'Há 3h', unread: true },
+            { id: 7, icon: 'user-minus', bg: 'bg-slate-100', color: 'text-slate-700', text: 'Carla desativou notificações de uma publicação.', time: 'Há 2 dias', unread: false }
         ];
 
         const mockContacts = [
@@ -615,7 +739,11 @@
             { id: 2, name: "Ana Luiza", phone: "(15) 98888-2222", added: true, initials: "AL", color: "bg-purple-200 text-purple-700" },
             { id: 3, name: "Carla (Faculdade)", phone: "(15) 97777-3333", added: false, initials: "C", color: "bg-blue-200 text-blue-700" },
             { id: 4, name: "Tia Rosa", phone: "(15) 96666-4444", added: false, initials: "TR", color: "bg-yellow-200 text-yellow-700" },
-            { id: 5, name: "Irmão", phone: "(15) 95555-5555", added: true, initials: "I", color: "bg-slate-200 text-slate-700" }
+            { id: 5, name: "Irmão", phone: "(15) 95555-5555", added: true, initials: "I", color: "bg-slate-200 text-slate-700" },
+            { id: 6, name: "Dra. Paula (Saúde)", phone: "(15) 93333-6666", added: false, initials: "DP", color: "bg-green-200 text-green-700" },
+            { id: 7, name: "Equipe ONG", phone: "(15) 92222-4444", added: true, initials: "EO", color: "bg-purple-200 text-purple-700" },
+            { id: 8, name: "GCM - Santo Antônio", phone: "190", added: true, initials: "G", color: "bg-red-200 text-red-700" },
+            { id: 9, name: "Taxi Amigo", phone: "(15) 91111-0000", added: false, initials: "TA", color: "bg-blue-200 text-blue-700" }
         ];
 
         // ----------------------------------------------------
@@ -643,9 +771,12 @@
                 const verifiedBadge = post.verified ? `<i data-lucide="badge-check" class="w-4 h-4 text-blue-500"></i>` : '';
                 const betaBadge = post.beta ? `<div class="absolute inset-0 bg-white/70 backdrop-blur-[1px] flex items-center justify-center z-10"><span class="bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">Funcionalidade Beta</span></div>` : '';
                 
-                const likeIconClass = post.liked ? 'text-purple-600 fill-purple-600' : 'text-slate-500';
+                    const likeIconClass = post.liked ? 'text-purple-600' : 'text-slate-500';
+                    const heartSvg = post.liked
+                        ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 3.99 4 6.5 4c1.74 0 3.41.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18.01 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
+                        : `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
 
-                const postHtml = `
+                    const postHtml = `
                     <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden active:bg-slate-50 transition-colors cursor-pointer" onclick="openPostDetail(${post.id})">
                         ${betaBadge}
                         <div class="flex justify-between items-start mb-2">
@@ -664,7 +795,7 @@
                         <p class="text-sm text-slate-700 mt-2 ml-[52px] leading-relaxed">${post.content}</p>
                         <div class="mt-3 ml-[52px] flex gap-4 border-t border-slate-50 pt-3">
                             <button onclick="toggleLike(event, ${post.id})" class="flex items-center gap-1.5 text-xs font-bold hover:text-purple-600 ${likeIconClass} transition-colors">
-                                <i data-lucide="heart" class="w-4 h-4"></i> ${post.likes}
+                                ${heartSvg} <span class="ml-1">${post.likes}</span>
                             </button>
                             <button class="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-purple-600 transition-colors">
                                 <i data-lucide="message-circle" class="w-4 h-4"></i> ${post.comments}
@@ -681,13 +812,13 @@
         function renderNotifications() {
             const container = document.getElementById('notifications-list-container');
             container.innerHTML = '';
-            
+            // Render as elements with swipe handlers
             mockNotifications.forEach(notif => {
                 const unreadDot = notif.unread ? `<div class="w-2 h-2 rounded-full bg-purple-600 mt-2 shrink-0"></div>` : '';
                 const bgActive = notif.unread ? 'bg-white' : 'bg-transparent opacity-70';
-                
+
                 const html = `
-                    <div class="${bgActive} p-4 rounded-2xl border border-slate-100 flex gap-3 cursor-pointer hover:bg-slate-100 transition-colors">
+                    <div id="notif-${notif.id}" data-id="${notif.id}" class="notif-item ${bgActive} p-4 rounded-2xl border border-slate-100 flex gap-3 cursor-pointer hover:bg-slate-100 transition-colors">
                         <div class="${notif.bg} ${notif.color} p-3 rounded-xl shrink-0 h-fit">
                             <i data-lucide="${notif.icon}" class="w-5 h-5"></i>
                         </div>
@@ -701,6 +832,63 @@
                 container.insertAdjacentHTML('beforeend', html);
             });
             lucide.createIcons();
+
+            // Attach swipe-to-dismiss handlers
+            setTimeout(() => {
+                const items = document.querySelectorAll('.notif-item');
+                items.forEach(el => {
+                    let startX = 0; let currentX = 0; let dragging = false;
+                    const id = el.dataset.id;
+
+                    function handleStart(e) {
+                        dragging = true;
+                        startX = (e.touches ? e.touches[0].clientX : e.clientX);
+                        el.style.transition = 'none';
+                    }
+                    function handleMove(e) {
+                        if (!dragging) return;
+                        currentX = (e.touches ? e.touches[0].clientX : e.clientX);
+                        const dx = currentX - startX;
+                        // if mostly horizontal, move element
+                        if (Math.abs(dx) > 5) e.preventDefault();
+                        el.style.transform = `translateX(${dx}px)`;
+                        el.style.opacity = `${Math.max(0.15, 1 - Math.abs(dx) / 200)}`;
+                    }
+                    function handleEnd(e) {
+                        if (!dragging) return;
+                        dragging = false;
+                        el.style.transition = '';
+                        const dx = currentX - startX;
+                        if (Math.abs(dx) > 80) {
+                            // dismiss
+                            const direction = dx > 0 ? 1 : -1;
+                            el.style.transform = `translateX(${direction * 120}%)`;
+                            el.style.opacity = '0';
+                            setTimeout(() => removeNotification(Number(id)), 180);
+                        } else {
+                            // restore
+                            el.style.transform = '';
+                            el.style.opacity = '';
+                        }
+                    }
+
+                    el.addEventListener('touchstart', handleStart, {passive:true});
+                    el.addEventListener('touchmove', handleMove, {passive:false});
+                    el.addEventListener('touchend', handleEnd);
+
+                    el.addEventListener('mousedown', handleStart);
+                    window.addEventListener('mousemove', handleMove);
+                    window.addEventListener('mouseup', handleEnd);
+                });
+            }, 50);
+        }
+
+        function removeNotification(id) {
+            const idx = mockNotifications.findIndex(n => n.id === id);
+            if (idx === -1) return;
+            const removed = mockNotifications.splice(idx, 1)[0];
+            renderNotifications();
+            showToast('Notificação removida');
         }
 
         // Contatos da Agenda
@@ -815,13 +1003,18 @@
         // ----------------------------------------------------
         function openPostDetail(id) {
             const post = mockPosts.find(p => p.id === id);
+            // marca qual post está aberto para que o input de comentário saiba onde inserir
+            currentOpenPostId = id;
             const contentDiv = document.getElementById('post-detail-content');
             
             const avatarHtml = post.avatar 
                 ? `<img src="${post.avatar}" class="w-10 h-10 rounded-full object-cover border border-slate-200">`
                 : `<div class="bg-purple-200 w-10 h-10 rounded-full flex items-center justify-center text-purple-700 font-bold text-sm border border-purple-300">A</div>`;
             const verifiedBadge = post.verified ? `<i data-lucide="badge-check" class="w-4 h-4 text-blue-500"></i>` : '';
-            const likeIconClass = post.liked ? 'text-purple-600 fill-purple-600' : 'text-slate-500';
+            const likeIconClass = post.liked ? 'text-purple-600' : 'text-slate-500';
+            const heartSvg = post.liked
+                ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 3.99 4 6.5 4c1.74 0 3.41.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18.01 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
+                : `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
 
             contentDiv.innerHTML = `
                 <div class="flex justify-between items-start mb-3">
@@ -837,7 +1030,7 @@
                 <p class="text-[15px] text-slate-800 mt-2 leading-relaxed font-medium">${post.content}</p>
                 <div class="mt-4 flex gap-6 border-t border-slate-100 pt-4">
                     <button onclick="toggleLike(event, ${post.id})" class="flex items-center gap-2 text-sm font-bold ${likeIconClass} transition-colors">
-                        <i data-lucide="heart" class="w-5 h-5"></i> ${post.likes} Curtidas
+                        ${heartSvg} <span class="ml-2">${post.likes} Curtidas</span>
                     </button>
                     <button class="flex items-center gap-2 text-sm font-bold text-slate-500">
                         <i data-lucide="message-circle" class="w-5 h-5"></i> ${post.comments} Comentários
@@ -847,21 +1040,26 @@
 
             const commentsContainer = document.getElementById('post-comments-container');
             commentsContainer.innerHTML = '';
-            mockComments.forEach(comment => {
-                const cVerified = comment.verified ? `<i data-lucide="badge-check" class="w-3.5 h-3.5 text-blue-500"></i>` : '';
-                commentsContainer.innerHTML += `
-                    <div class="bg-white p-4 rounded-2xl border border-slate-100 flex gap-3">
-                        <img src="${comment.avatar}" class="w-8 h-8 rounded-full border border-slate-200 shrink-0">
-                        <div>
-                            <div class="flex items-baseline gap-2">
-                                <span class="font-bold text-sm text-slate-800 flex items-center gap-1">${comment.author} ${cVerified}</span>
-                                <span class="text-[10px] font-medium text-slate-400">${comment.time}</span>
+            const commentsList = post.commentsList && post.commentsList.length ? post.commentsList : mockComments;
+            if (commentsList.length === 0) {
+                commentsContainer.innerHTML = `<div class="text-center text-slate-500 py-6">Seja a primeira a comentar.</div>`;
+            } else {
+                commentsList.forEach(comment => {
+                    const cVerified = comment.verified ? `<i data-lucide="badge-check" class="w-3.5 h-3.5 text-blue-500"></i>` : '';
+                    commentsContainer.innerHTML += `
+                        <div class="bg-white p-4 rounded-2xl border border-slate-100 flex gap-3">
+                            <img src="${comment.avatar}" class="w-8 h-8 rounded-full border border-slate-200 shrink-0">
+                            <div>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="font-bold text-sm text-slate-800 flex items-center gap-1">${comment.author} ${cVerified}</span>
+                                    <span class="text-[10px] font-medium text-slate-400">${comment.time}</span>
+                                </div>
+                                <p class="text-sm text-slate-600 mt-0.5">${comment.content}</p>
                             </div>
-                            <p class="text-sm text-slate-600 mt-0.5">${comment.content}</p>
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
 
             switchTab('post-detail');
             lucide.createIcons();
@@ -920,6 +1118,7 @@
             const userName = inputValue.includes('@') ? inputValue.split('@')[0] : mockUser.name;
             const finalName = userName.charAt(0).toUpperCase() + userName.slice(1);
 
+            // imediato: sem animação/transição para a tela inicial
             document.getElementById('header-user-name').innerText = finalName;
             document.getElementById('profile-name').innerText = finalName;
             document.getElementById('profile-email').innerText = inputValue;
@@ -949,8 +1148,11 @@
             if(isSharingLocation) toggleShareLocation(); // reseta o share state
         }
 
-        let mapInitialized = false;
-        let map;
+    let mapInitialized = false;
+    let map;
+    let currentOpenPostId = null;
+    // Neighborhood outline layer (used when drawing polygon from OSM)
+    let neighborhoodOutlineLayer = null;
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -978,6 +1180,16 @@
 
             setTimeout(() => { if(activeTab) activeTab.dispatchEvent(new Event('scroll')); }, 10);
 
+            // update header state based on the active tab's scroll position (more reliable than dispatched events)
+            setTimeout(() => { if (activeTab) updateHeaderState(activeTab.scrollTop || 0); }, 20);
+
+            // show/hide quick report button depending on active tab
+            const reportBtn = document.getElementById('home-report-btn');
+            if (reportBtn) {
+                if (tabId === 'home') reportBtn.classList.remove('hidden');
+                else reportBtn.classList.add('hidden');
+            }
+
             if (tabId === 'map') {
                 setTimeout(() => {
                     if (!mapInitialized) {
@@ -990,48 +1202,171 @@
             }
         }
 
-        // Header Retrátil
+        // Header Retrátil (refatorado)
         const mainHeader = document.getElementById('main-header');
         const headerTextContainer = document.getElementById('header-text-container');
         const headerAvatar = document.getElementById('header-avatar');
         const headerStatus = document.getElementById('header-status');
 
+        function updateHeaderState(scrollTop) {
+            if (scrollTop > 30) {
+                headerTextContainer.classList.remove('max-h-20', 'opacity-100', 'mt-3');
+                headerTextContainer.classList.add('max-h-0', 'opacity-0', 'mt-0');
+                mainHeader.classList.remove('p-6', 'pb-5');
+                mainHeader.classList.add('p-4', 'pb-4');
+                headerAvatar.classList.remove('w-12', 'h-12');
+                headerAvatar.classList.add('w-10', 'h-10');
+                headerStatus.classList.replace('w-3.5', 'w-3');
+                headerStatus.classList.replace('h-3.5', 'h-3');
+            } else {
+                headerTextContainer.classList.remove('max-h-0', 'opacity-0', 'mt-0');
+                headerTextContainer.classList.add('max-h-20', 'opacity-100', 'mt-3');
+                mainHeader.classList.remove('p-4', 'pb-4');
+                mainHeader.classList.add('p-6', 'pb-5');
+                headerAvatar.classList.remove('w-10', 'h-10');
+                headerAvatar.classList.add('w-12', 'h-12');
+                headerStatus.classList.replace('w-3', 'w-3.5');
+                headerStatus.classList.replace('h-3', 'h-3.5');
+            }
+            // reposition quick report button whenever header changes
+            try { updateReportButtonPosition(); } catch(e) {}
+        }
+
+        // Attach scroll listeners that call the shared updater
         document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.addEventListener('scroll', (e) => {
-                if (e.target.scrollTop > 30) {
-                    headerTextContainer.classList.remove('max-h-20', 'opacity-100', 'mt-3');
-                    headerTextContainer.classList.add('max-h-0', 'opacity-0', 'mt-0');
-                    mainHeader.classList.remove('p-6', 'pb-5');
-                    mainHeader.classList.add('p-4', 'pb-4');
-                    headerAvatar.classList.remove('w-12', 'h-12');
-                    headerAvatar.classList.add('w-10', 'h-10');
-                    headerStatus.classList.replace('w-3.5', 'w-3');
-                    headerStatus.classList.replace('h-3.5', 'h-3');
-                } else {
-                    headerTextContainer.classList.remove('max-h-0', 'opacity-0', 'mt-0');
-                    headerTextContainer.classList.add('max-h-20', 'opacity-100', 'mt-3');
-                    mainHeader.classList.remove('p-4', 'pb-4');
-                    mainHeader.classList.add('p-6', 'pb-5');
-                    headerAvatar.classList.remove('w-10', 'h-10');
-                    headerAvatar.classList.add('w-12', 'h-12');
-                    headerStatus.classList.replace('w-3', 'w-3.5');
-                    headerStatus.classList.replace('h-3', 'h-3.5');
-                }
-            });
+            tab.addEventListener('scroll', () => updateHeaderState(tab.scrollTop));
         });
+
+        // Position quick report button below header
+        function updateReportButtonPosition() {
+            const btn = document.getElementById('home-report-btn');
+            const header = document.getElementById('main-header');
+            const app = document.getElementById('app-container');
+            if (!btn || !header || !app) return;
+            // header offsetHeight is relative to app container
+            const top = header.offsetHeight + 8; // 8px gap
+            btn.style.top = top + 'px';
+        }
+
+        window.addEventListener('resize', () => updateReportButtonPosition());
 
         function initMap() {
             const sorocabaCoords = [-23.5015, -47.4581];
             map = L.map('map', { zoomControl: false }).setView(sorocabaCoords, 13);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
 
-            const dangerIcon = L.divIcon({ html: `<div style="background-color: #dc2626; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`, className: '' });
-            const safeIcon = L.divIcon({ html: `<div style="background-color: #16a34a; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`, className: '' });
-            const ongIcon = L.divIcon({ html: `<div style="background-color: #7e22ce; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`, className: '' });
+            // Pontos de interesse: Delegacias
+            const delegaciaMulherHtml = `<div style="background:#ff7aa2;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.18);font-size:16px;">⚖️</div>`;
+            const delegaciaPmHtml = `<div style="background:#2563eb;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.18);font-size:16px;">🚓</div>`;
+            const delegaciaMulherIcon = L.divIcon({ html: delegaciaMulherHtml, className: '' });
+            const delegaciaPmIcon = L.divIcon({ html: delegaciaPmHtml, className: '' });
 
-            L.marker([-23.5120, -47.4650], {icon: dangerIcon}).addTo(map).bindPopup('Atenção: Área mal iluminada');
-            L.marker([-23.4950, -47.4510], {icon: safeIcon}).addTo(map).bindPopup('Ponto Seguro Verificado');
-            L.marker([-23.5050, -47.4580], {icon: ongIcon}).addTo(map).bindPopup('ONG Apoio à Mulher');
+            // Coordenadas aproximadas (mock) - ajuste conforme necessário
+            L.marker([-23.5045, -47.4528], { icon: delegaciaMulherIcon }).addTo(map).bindPopup('<strong>Delegacia da Mulher</strong><br>Plantão/Atendimento');
+            L.marker([-23.5002, -47.4560], { icon: delegaciaPmIcon }).addTo(map).bindPopup('<strong>Delegacia da Polícia Militar</strong><br>Contato emergencial: 190');
+
+            // adicionar pontos de ônibus
+            addBusStops(map);
+
+            // ligar handlers da legenda
+            setTimeout(() => {
+                const legendBtn = document.getElementById('legend-toggle');
+                const filterPanel = document.getElementById('map-filter');
+                if (legendBtn && filterPanel) {
+                    // top-right button now toggles the filter panel (neighborhood search) only
+                    legendBtn.addEventListener('click', () => {
+                        filterPanel.classList.toggle('hidden');
+                    });
+                }
+
+                // neighborhood search input/button
+                const nbInput = document.getElementById('neighborhood-input');
+                const nbBtn = document.getElementById('neighborhood-search');
+                if (nbBtn && nbInput) {
+                    nbBtn.addEventListener('click', () => {
+                        const val = nbInput.value.trim();
+                        if (!val) { showToast('Digite o nome do bairro.'); return; }
+                        fetchNeighborhoodPolygon(val).catch(() => showToast('Não foi possível carregar o contorno do bairro.'));
+                    });
+                    nbInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') nbBtn.click(); });
+                }
+            }, 80);
+        }
+
+        function addBusStops(mapInstance) {
+            // bus icon with clear visual
+            const busHtml = `<div style="background:#0ea5e9;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.18);font-size:16px;">🚌</div>`;
+            const busIcon = L.divIcon({ html: busHtml, className: '' });
+            const stops = [
+                { name: 'Av. Itavuvu / Shopping', coords: [-23.5008, -47.4595] },
+                { name: 'Terminal Santo Antônio', coords: [-23.5062, -47.4571] },
+                { name: 'Praça Central', coords: [-23.4991, -47.4520] },
+                { name: 'Rua da Faculdade', coords: [-23.5080, -47.4600] },
+                { name: 'Av. Afonso Vergueiro', coords: [-23.5125, -47.4560] },
+                { name: 'Bairro Alto - Ponto', coords: [-23.4955, -47.4630] }
+            ];
+            stops.forEach(s => L.marker(s.coords, { icon: busIcon }).addTo(mapInstance).bindPopup(`<strong>Ponto de Ônibus</strong><br>${s.name}`));
+        }
+
+        
+
+        // Busca polígono do bairro via Nominatim (OpenStreetMap) e desenha contorno no mapa
+        async function fetchNeighborhoodPolygon(name) {
+            if (!name || name === 'all') return;
+            // remove previous outline
+            if (neighborhoodOutlineLayer) { neighborhoodOutlineLayer.remove(); neighborhoodOutlineLayer = null; }
+
+            const q = encodeURIComponent(`${name}, Sorocaba, BR`);
+            const url = `https://nominatim.openstreetmap.org/search.php?q=${q}&format=geojson&polygon_geojson=1&limit=1`;
+            const res = await fetch(url, { method: 'GET' });
+            if (!res.ok) throw new Error('Nominatim error');
+            const geo = await res.json();
+            if (!geo || !geo.features || geo.features.length === 0) throw new Error('Nenhum polígono encontrado');
+
+            // prefer polygon/multipolygon; if none, take first feature
+            const feat = geo.features.find(f => f.geometry && (f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon')) || geo.features[0];
+            if (!feat) throw new Error('Geometria não encontrada');
+
+            // assign a random security level (simulated) and corresponding color/label
+            const r = Math.random();
+            let levelLabel = 'Seguro';
+            let levelColor = '#16a34a'; // green
+            if (r >= 0.85) { levelLabel = 'Alto risco'; levelColor = '#dc2626'; }
+            else if (r >= 0.6) { levelLabel = 'Atenção'; levelColor = '#f97316'; }
+            else if (r >= 0.35) { levelLabel = 'Moderado'; levelColor = '#facc15'; }
+
+            // draw polygon or fallback to a circle if only a point is available
+            if (feat.geometry && (feat.geometry.type === 'Polygon' || feat.geometry.type === 'MultiPolygon')) {
+                neighborhoodOutlineLayer = L.geoJSON(feat, {
+                    style: {
+                        color: levelColor,
+                        weight: 3,
+                        opacity: 0.95,
+                        fillColor: levelColor,
+                        fillOpacity: 0.12
+                    }
+                }).addTo(map);
+
+                try { map.fitBounds(neighborhoodOutlineLayer.getBounds(), { padding: [20,20] }); } catch(e) {}
+            } else if (feat.geometry && feat.geometry.type === 'Point') {
+                // coordinates are [lon, lat]
+                const coords = feat.geometry.coordinates;
+                const latlng = [coords[1], coords[0]];
+                neighborhoodOutlineLayer = L.circle(latlng, {
+                    radius: 800,
+                    color: levelColor,
+                    weight: 3,
+                    fillColor: levelColor,
+                    fillOpacity: 0.12
+                }).addTo(map);
+                try { map.fitBounds(neighborhoodOutlineLayer.getBounds(), { padding: [20,20] }); } catch(e) {}
+            } else {
+                // fallback: try to draw bbox from feature properties if present
+                neighborhoodOutlineLayer = L.geoJSON(feat).addTo(map);
+                try { map.fitBounds(neighborhoodOutlineLayer.getBounds(), { padding: [20,20] }); } catch(e) {}
+            }
+
+            showToast(`Contorno de ${name} carregado — Nível: ${levelLabel}`);
         }
 
         // Sistema Genérico de Modais
@@ -1069,9 +1404,10 @@
             }, 300);
         }
 
-        // Fechar ao clicar fora
-        ['sos', 'menu', 'filter', 'report', 'notifications', 'share-location'].forEach(id => {
+        // Fechar ao clicar fora (inclui modais novos)
+        ['sos', 'menu', 'filter', 'report', 'notifications', 'share-location', 'create-post', 'aggression'].forEach(id => {
             const modal = document.getElementById(`${id}-modal`);
+            if (!modal) return;
             modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(id); });
         });
 
@@ -1087,6 +1423,118 @@
         function submitReport() {
             closeModal('report');
             showToast('Denúncia recebida. Nossa equipe vai analisar.');
+        }
+
+        // Dark mode toggle
+        // Dark mode removed; keep a placeholder function to avoid JS errors if called elsewhere.
+        function toggleDarkMode() {
+            showToast('Modo Escuro está em WIP — disponível em breve.');
+            const label = document.getElementById('dark-mode-label');
+            if (label) label.innerText = 'Modo Escuro (WIP)';
+        }
+
+        // Apply persisted theme on load
+        (function applyPersistedTheme(){
+            // Dark mode persistence removed. Ensure menu label indicates WIP state.
+            try {
+                const label = document.getElementById('dark-mode-label');
+                if (label) label.innerText = 'Modo Escuro (WIP)';
+            } catch(e) { /* ignore */ }
+        })();
+
+        // Criar novo post a partir do modal
+        function createPost() {
+            const category = document.getElementById('new-post-category').value || 'ATENÇÃO';
+            const location = document.getElementById('new-post-location').value || '';
+            const content = document.getElementById('new-post-content').value || '';
+            if (!content.trim()) {
+                showToast('Por favor, descreva o ocorrido.');
+                return;
+            }
+
+            const newPost = {
+                id: Date.now(),
+                author: document.getElementById('header-user-name').innerText || mockUser.name,
+                avatar: mockUser.avatar,
+                verified: false,
+                time: 'Agora',
+                location: location || 'Local não informado',
+                category: category,
+                color: category === 'LOCAL SEGURO' ? 'green' : (category === 'ILUMINAÇÃO' ? 'blue' : (category === 'ASSÉDIO' ? 'red' : 'orange')),
+                content: content,
+                likes: 0,
+                comments: 0,
+                liked: false,
+                commentsList: []
+            };
+
+            mockPosts.unshift(newPost);
+            closeModal('create-post');
+            renderFeed();
+            showToast('Alerta publicado. Obrigada por compartilhar.');
+            // limpa form
+            document.getElementById('new-post-content').value = '';
+            document.getElementById('new-post-location').value = '';
+        }
+
+        // Enviar denúncia de agressão (cria um post categoria ASSÉDIO e notificação)
+        function submitAggressionReport() {
+            const location = document.getElementById('aggr-location').value || 'Local não informado';
+            const desc = document.getElementById('aggr-desc').value || '';
+            if (!desc.trim()) { showToast('Por favor, descreva a situação.'); return; }
+
+            const newPost = {
+                id: Date.now(),
+                author: document.getElementById('header-user-name').innerText || mockUser.name,
+                avatar: mockUser.avatar,
+                verified: false,
+                time: 'Agora',
+                location: location,
+                category: 'ASSÉDIO',
+                color: 'red',
+                content: desc,
+                likes: 0,
+                comments: 0,
+                liked: false,
+                commentsList: []
+            };
+            mockPosts.unshift(newPost);
+            mockNotifications.unshift({ id: Date.now(), icon: 'shield-alert', bg: 'bg-red-100', color: 'text-red-600', text: 'Nova denúncia de agressão enviada.', time: 'Agora', unread: true });
+            closeModal('aggression');
+            renderFeed();
+            renderNotifications();
+            showToast('Denúncia enviada com sucesso. A equipe foi notificada.');
+            document.getElementById('aggr-desc').value = '';
+            document.getElementById('aggr-location').value = '';
+        }
+
+        function submitComment() {
+            const input = document.getElementById('post-comment-input');
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) { showToast('Escreva um comentário antes de enviar.'); return; }
+            if (!currentOpenPostId) { showToast('Nenhuma publicação selecionada.'); return; }
+
+            const post = mockPosts.find(p => p.id === currentOpenPostId);
+            if (!post) { showToast('Publicação não encontrada.'); return; }
+
+            const newComment = {
+                author: document.getElementById('header-user-name').innerText || mockUser.name,
+                avatar: mockUser.avatar,
+                time: 'Agora',
+                content: text,
+                verified: false
+            };
+
+            post.commentsList = post.commentsList || [];
+            post.commentsList.push(newComment);
+            post.comments = (post.comments || 0) + 1;
+            input.value = '';
+            // atualiza o feed (contador de comentários) e reabre o detalhe atualizado
+            renderFeed();
+            // re-render post detail
+            openPostDetail(post.id);
+            showToast('Comentário enviado!');
         }
 
     </script>
