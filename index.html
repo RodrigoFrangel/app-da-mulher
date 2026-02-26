@@ -14,6 +14,8 @@
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Font Awesome (used for filled map icon as requested) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
         /* Esconder scrollbar para um visual mais limpo de app */
@@ -166,10 +168,8 @@
             </div>
         </header>
 
-        <!-- Botão de denunciar rápido (aparece apenas na tela Início) -->
-        <button id="home-report-btn" onclick="openModal('aggression')" class="hidden absolute top-[92px] right-4 z-30 bg-red-600 text-white p-3 rounded-full shadow-lg active:scale-95" title="Denunciar">
-            <i data-lucide="shield-alert" class="w-5 h-5"></i>
-        </button>
+        <!-- Botão de denunciar rápido (fixo, tom mais claro e ícone vermelho; fundo vazado) -->
+        <!-- quick report button will be placed inside the SOS container below (so it's visually grouped) -->
 
         <!-- VIEWS -->
         <main class="flex-1 relative bg-slate-50 min-h-0">
@@ -178,11 +178,15 @@
             <div id="view-home" class="tab-content active p-4 pb-32 space-y-6">
                 
                 <!-- Secção de Emergência -->
-                <div class="flex flex-col items-center justify-center py-4">
+                <div class="flex flex-col items-center justify-center py-4 relative">
                     <button onclick="openModal('sos')" class="btn-sos bg-red-600 text-white w-40 h-40 rounded-full flex flex-col items-center justify-center shadow-lg active:scale-95 transition-transform">
                         <i data-lucide="siren" class="w-12 h-12 mb-2"></i>
                         <span class="font-bold text-2xl tracking-widest">SOS</span>
                         <span class="text-xs text-red-200 mt-1">Tocar para ajuda</span>
+                    </button>
+                    <!-- Denúncia: visual leve, sem preenchimento, ícone vermelho; posicionada junto ao SOS -->
+                    <button id="home-report-btn" onclick="openModal('aggression')" class="hidden absolute top-2 right-2 p-3 rounded-full border-2 border-red-200 bg-transparent text-red-600 shadow-sm active:scale-95" title="Denunciar">
+                        <i data-lucide="shield-alert" class="w-5 h-5"></i>
                     </button>
                 </div>
 
@@ -309,9 +313,8 @@
                     </button>
                 </div>
 
-                <!-- Botão de Criar Novo Post -->
+                <!-- Botão de Criar Novo Post (imagem removida por solicitação) -->
                 <button onclick="openModal('create-post')" class="w-full bg-white p-4 rounded-3xl shadow-sm border border-slate-100 mb-6 flex items-center gap-3 text-slate-500 active:scale-[0.98] transition-transform">
-                    <img src="https://i.pravatar.cc/100?img=5" id="feed-input-avatar" class="w-10 h-10 rounded-full border border-slate-200 object-cover">
                     <span class="flex-1 text-left text-sm font-medium">Relatar algo na sua área...</span>
                     <div class="p-2 bg-purple-50 rounded-full text-purple-600">
                         <i data-lucide="pen-tool" class="w-4 h-4"></i>
@@ -343,14 +346,7 @@
                     </div>
                 </div>
 
-                <!-- Input para comentar -->
-                <div class="fixed bottom-[88px] w-full max-w-md bg-white border-t border-slate-200 p-3 flex items-center gap-2 px-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-                    <img src="https://i.pravatar.cc/100?img=5" class="w-8 h-8 rounded-full border border-slate-200">
-                    <input id="post-comment-input" type="text" placeholder="Adicione um comentário..." class="flex-1 bg-slate-100 text-sm rounded-full px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-purple-500">
-                    <button onclick="submitComment()" class="text-purple-600 p-2 active:scale-95">
-                        <i data-lucide="send" class="w-5 h-5"></i>
-                    </button>
-                </div>
+                <!-- Input para comentar: agora é renderizado dinamicamente logo após os comentários (removido o input fixo) -->
             </div>
 
             <!-- VIEW: ADICIONAR CONTATOS -->
@@ -454,8 +450,8 @@
         <nav class="absolute bottom-6 left-1/2 -translate-x-1/2 w-[230px] max-w-[230px] z-30 pointer-events-none">
         <div class="bg-purple-700/95 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.3)] border border-purple-600 rounded-full flex justify-between items-center h-[56px] px-2 pointer-events-auto">
                 
-                <button onclick="switchTab('home')" class="nav-btn group flex items-center justify-center w-full h-full text-white transition-colors" data-target="home" aria-label="Início">
-                    <div class="icon-wrapper p-2 rounded-full bg-white/20 transition-all duration-300">
+                <button onclick="switchTab('home')" class="nav-btn group flex items-center justify-center w-full h-full text-purple-300 transition-colors" data-target="home" aria-label="Início">
+                    <div class="icon-wrapper p-2 rounded-full bg-transparent transition-all duration-300">
                         <i data-lucide="home" class="w-6 h-6"></i>
                     </div>
                 </button>
@@ -510,7 +506,7 @@
                     </button>
                 </div>
 
-                <div id="notifications-list-container" class="space-y-3 overflow-y-auto flex-1 pb-10">
+                <div id="notifications-list-container" class="divide-y divide-slate-100 overflow-y-auto flex-1 pb-10">
                     <!-- Preenchido via JS -->
                 </div>
             </div>
@@ -773,8 +769,8 @@
                 
                     const likeIconClass = post.liked ? 'text-purple-600' : 'text-slate-500';
                     const heartSvg = post.liked
-                        ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 3.99 4 6.5 4c1.74 0 3.41.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18.01 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
-                        : `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+                        ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 3.99 4 6.5 4c1.74 0 3.41.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18.01 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
+                        : `<i data-lucide="heart" class="w-4 h-4 text-slate-500"></i>`;
 
                     const postHtml = `
                     <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden active:bg-slate-50 transition-colors cursor-pointer" onclick="openPostDetail(${post.id})">
@@ -815,11 +811,11 @@
             // Render as elements with swipe handlers
             mockNotifications.forEach(notif => {
                 const unreadDot = notif.unread ? `<div class="w-2 h-2 rounded-full bg-purple-600 mt-2 shrink-0"></div>` : '';
-                const bgActive = notif.unread ? 'bg-white' : 'bg-transparent opacity-70';
 
+                // items now have no background or rounded container; separators are handled by container's divide-y
                 const html = `
-                    <div id="notif-${notif.id}" data-id="${notif.id}" class="notif-item ${bgActive} p-4 rounded-2xl border border-slate-100 flex gap-3 cursor-pointer hover:bg-slate-100 transition-colors">
-                        <div class="${notif.bg} ${notif.color} p-3 rounded-xl shrink-0 h-fit">
+                    <div id="notif-${notif.id}" data-id="${notif.id}" onclick="openNotification(event, ${notif.id})" class="notif-item p-4 flex gap-3 items-start hover:bg-slate-50 transition-colors">
+                        <div class="${notif.bg} ${notif.color} p-3 rounded-lg shrink-0 h-fit">
                             <i data-lucide="${notif.icon}" class="w-5 h-5"></i>
                         </div>
                         <div class="flex-1">
@@ -843,6 +839,8 @@
                     function handleStart(e) {
                         dragging = true;
                         startX = (e.touches ? e.touches[0].clientX : e.clientX);
+                        // initialize currentX to startX so a simple click (no move) does not register as a large dx
+                        currentX = startX;
                         el.style.transition = 'none';
                     }
                     function handleMove(e) {
@@ -876,9 +874,10 @@
                     el.addEventListener('touchmove', handleMove, {passive:false});
                     el.addEventListener('touchend', handleEnd);
 
+                    // attach mouse handlers to the element itself so they are removed when the element is re-rendered
                     el.addEventListener('mousedown', handleStart);
-                    window.addEventListener('mousemove', handleMove);
-                    window.addEventListener('mouseup', handleEnd);
+                    el.addEventListener('mousemove', handleMove);
+                    el.addEventListener('mouseup', handleEnd);
                 });
             }, 50);
         }
@@ -889,6 +888,21 @@
             const removed = mockNotifications.splice(idx, 1)[0];
             renderNotifications();
             showToast('Notificação removida');
+        }
+
+        // Open a notification — this should NOT remove it. Mark it as read and keep it in the list.
+        function openNotification(e, id) {
+            // prevent the click from being interpreted as a drag or closing modal
+            e.stopPropagation();
+            e.preventDefault();
+            const notif = mockNotifications.find(n => n.id === id);
+            if (!notif) return;
+            // mark as read (update state and re-render to remove unread dot)
+            if (notif.unread) {
+                notif.unread = false;
+                renderNotifications();
+            }
+            // Do NOT show a toast when user clicks a notification (intentional: keep notification list unchanged besides read state)
         }
 
         // Contatos da Agenda
@@ -1013,8 +1027,8 @@
             const verifiedBadge = post.verified ? `<i data-lucide="badge-check" class="w-4 h-4 text-blue-500"></i>` : '';
             const likeIconClass = post.liked ? 'text-purple-600' : 'text-slate-500';
             const heartSvg = post.liked
-                ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 3.99 4 6.5 4c1.74 0 3.41.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18.01 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
-                : `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+                ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 3.99 4 6.5 4c1.74 0 3.41.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18.01 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
+                : `<i data-lucide="heart" class="w-5 h-5 text-slate-500"></i>`;
 
             contentDiv.innerHTML = `
                 <div class="flex justify-between items-start mb-3">
@@ -1060,6 +1074,24 @@
                     `;
                 });
             }
+
+            // Remover input de comentário anterior, caso exista
+            const prevInputWrapper = document.getElementById('post-comment-input-wrapper');
+            if (prevInputWrapper) prevInputWrapper.remove();
+
+            // Inserir input de comentário logo após o último comentário (não fixo)
+            const commentInputHtml = `
+                <div id="post-comment-input-wrapper" class="mt-4">
+                    <div class="flex items-center gap-2">
+                        <!-- imagem do usuário removida conforme solicitado -->
+                        <input id="post-comment-input" type="text" placeholder="Adicione um comentário..." class="flex-1 bg-slate-100 text-sm rounded-full px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-purple-500">
+                        <button onclick="submitComment()" class="text-purple-600 p-2 active:scale-95">
+                            <i data-lucide="send" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            commentsContainer.insertAdjacentHTML('afterend', commentInputHtml);
 
             switchTab('post-detail');
             lucide.createIcons();
@@ -1119,15 +1151,24 @@
             const finalName = userName.charAt(0).toUpperCase() + userName.slice(1);
 
             // imediato: sem animação/transição para a tela inicial
-            document.getElementById('header-user-name').innerText = finalName;
-            document.getElementById('profile-name').innerText = finalName;
-            document.getElementById('profile-email').innerText = inputValue;
-            document.getElementById('profile-avatar').src = mockUser.avatar;
-            document.getElementById('menu-user-name').innerText = finalName;
-            document.getElementById('menu-user-email').innerText = inputValue;
-            document.getElementById('menu-avatar').src = mockUser.avatar;
-            document.getElementById('header-avatar').src = mockUser.avatar;
-            document.getElementById('feed-input-avatar').src = mockUser.avatar;
+            const headerUserNameEl = document.getElementById('header-user-name');
+            if (headerUserNameEl) headerUserNameEl.innerText = finalName;
+            const profileNameEl = document.getElementById('profile-name');
+            if (profileNameEl) profileNameEl.innerText = finalName;
+            const profileEmailEl = document.getElementById('profile-email');
+            if (profileEmailEl) profileEmailEl.innerText = inputValue;
+            const profileAvatarEl = document.getElementById('profile-avatar');
+            if (profileAvatarEl) profileAvatarEl.src = mockUser.avatar;
+            const menuUserNameEl = document.getElementById('menu-user-name');
+            if (menuUserNameEl) menuUserNameEl.innerText = finalName;
+            const menuUserEmailEl = document.getElementById('menu-user-email');
+            if (menuUserEmailEl) menuUserEmailEl.innerText = inputValue;
+            const menuAvatarEl = document.getElementById('menu-avatar');
+            if (menuAvatarEl) menuAvatarEl.src = mockUser.avatar;
+            const headerAvatarEl = document.getElementById('header-avatar');
+            if (headerAvatarEl) headerAvatarEl.src = mockUser.avatar;
+            const feedInputAvatarEl = document.getElementById('feed-input-avatar');
+            if (feedInputAvatarEl) feedInputAvatarEl.src = mockUser.avatar;
 
             document.getElementById('login-screen').classList.add('hidden');
             const appContainer = document.getElementById('app-container');
@@ -1154,6 +1195,30 @@
     // Neighborhood outline layer (used when drawing polygon from OSM)
     let neighborhoodOutlineLayer = null;
 
+        // helper to map nav data-target to lucide icon name
+        function navIconNameFor(target) {
+            if (target === 'home') return 'home';
+            if (target === 'map') return 'map';
+            if (target === 'feed') return 'message-square';
+            return target;
+        }
+
+        // return a small filled SVG string for the given icon name (uses currentColor)
+        function filledNavSvg(iconName, size = 24) {
+            if (iconName === 'home') {
+                return `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 2.25l-7 6.25V17a1 1 0 001 1h4v-4h4v4h4a1 1 0 001-1V8.5L10 2.25z" /></svg>`;
+            }
+            if (iconName === 'map') {
+                // Use Font Awesome solid map icon when active as requested by the user
+                return `<i class="fa-solid fa-map w-6 h-6" aria-hidden="true"></i>`;
+            }
+            if (iconName === 'message-square' || iconName === 'message') {
+                return `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5a2 2 0 012-2h14a2 2 0 012 2v11a2 2 0 01-2 2H8l-5 4V5z" /></svg>`;
+            }
+            // fallback: return empty string so caller can insert lucide <i>
+            return '';
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             const activeTab = document.getElementById('view-' + tabId);
@@ -1163,25 +1228,50 @@
             const navButtons = document.querySelectorAll('.nav-btn');
             navButtons.forEach(btn => {
                 const iconWrapper = btn.querySelector('.icon-wrapper');
-                if(btn.dataset.target === tabId) {
-                    btn.classList.replace('text-purple-300', 'text-white');
-                    if(iconWrapper) {
-                        iconWrapper.classList.remove('bg-transparent');
-                        iconWrapper.classList.add('bg-white/20');
-                    }
-                } else {
-                    btn.classList.replace('text-white', 'text-purple-300');
-                    if(iconWrapper) {
+                const target = btn.dataset.target;
+                const lucideName = navIconNameFor(target);
+
+                if (btn.dataset.target === tabId) {
+                    // active: icon filled (use inline filled SVG) and no background
+                    btn.classList.remove('text-purple-300');
+                    btn.classList.add('text-white');
+                    if (iconWrapper) {
                         iconWrapper.classList.remove('bg-white/20');
                         iconWrapper.classList.add('bg-transparent');
+                        // try to get a filled svg for this icon; if available, use it
+                        const filled = filledNavSvg(lucideName);
+                        if (filled) iconWrapper.innerHTML = filled;
+                        else iconWrapper.innerHTML = `<i data-lucide="${lucideName}" class="w-6 h-6"></i>`;
+                    }
+                } else {
+                    // inactive: lighter icon color, transparent background; restore lucide outline
+                    btn.classList.remove('text-white');
+                    btn.classList.add('text-purple-300');
+                    if (iconWrapper) {
+                        iconWrapper.classList.remove('bg-white/20');
+                        iconWrapper.classList.add('bg-transparent');
+                        iconWrapper.innerHTML = `<i data-lucide="${lucideName}" class="w-6 h-6"></i>`;
                     }
                 }
             });
+            // ensure lucide converts any newly-inserted <i> elements
+            try { lucide.createIcons(); } catch (e) {}
 
             setTimeout(() => { if(activeTab) activeTab.dispatchEvent(new Event('scroll')); }, 10);
 
-            // update header state based on the active tab's scroll position (more reliable than dispatched events)
-            setTimeout(() => { if (activeTab) updateHeaderState(activeTab.scrollTop || 0); }, 20);
+            // header behavior per tab:
+            // - Home: dynamic (retract on scroll down)
+            // - Map & Feed: always collapsed
+            // - others: always expanded
+            setTimeout(() => {
+                if (!activeTab) return;
+                if (tabId === 'home') {
+                    updateHeaderState(activeTab.scrollTop || 0);
+                } else {
+                    // all other tabs: keep header collapsed
+                    collapseHeader();
+                }
+            }, 20);
 
             // show/hide quick report button depending on active tab
             const reportBtn = document.getElementById('home-report-btn');
@@ -1228,27 +1318,66 @@
                 headerStatus.classList.replace('w-3', 'w-3.5');
                 headerStatus.classList.replace('h-3', 'h-3.5');
             }
-            // reposition quick report button whenever header changes
-            try { updateReportButtonPosition(); } catch(e) {}
+            // quick report button is fixed to viewport; no dynamic repositioning needed
         }
 
-        // Attach scroll listeners that call the shared updater
+        function collapseHeader() {
+            headerTextContainer.classList.remove('max-h-20', 'opacity-100', 'mt-3');
+            headerTextContainer.classList.add('max-h-0', 'opacity-0', 'mt-0');
+            mainHeader.classList.remove('p-6', 'pb-5');
+            mainHeader.classList.add('p-4', 'pb-4');
+            if (headerAvatar) {
+                headerAvatar.classList.remove('w-12', 'h-12');
+                headerAvatar.classList.add('w-10', 'h-10');
+            }
+            if (headerStatus) {
+                try { headerStatus.classList.replace('w-3.5', 'w-3'); headerStatus.classList.replace('h-3.5', 'h-3'); } catch(e) {}
+            }
+        }
+
+        function expandHeader() {
+            headerTextContainer.classList.remove('max-h-0', 'opacity-0', 'mt-0');
+            headerTextContainer.classList.add('max-h-20', 'opacity-100', 'mt-3');
+            mainHeader.classList.remove('p-4', 'pb-4');
+            mainHeader.classList.add('p-6', 'pb-5');
+            if (headerAvatar) {
+                headerAvatar.classList.remove('w-10', 'h-10');
+                headerAvatar.classList.add('w-12', 'h-12');
+            }
+            if (headerStatus) {
+                try { headerStatus.classList.replace('w-3', 'w-3.5'); headerStatus.classList.replace('h-3', 'h-3.5'); } catch(e) {}
+            }
+        }
+
+        // Attach scroll listeners to all tab-content but only update header when scrolling inside map or feed
         document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.addEventListener('scroll', () => updateHeaderState(tab.scrollTop));
+            tab.addEventListener('scroll', () => {
+                if (tab.id === 'view-home') {
+                    // dynamic behavior on Home
+                    updateHeaderState(tab.scrollTop);
+                } else {
+                    // all other tabs: always collapsed
+                    collapseHeader();
+                }
+            });
         });
 
-        // Position quick report button below header
-        function updateReportButtonPosition() {
-            const btn = document.getElementById('home-report-btn');
-            const header = document.getElementById('main-header');
-            const app = document.getElementById('app-container');
-            if (!btn || !header || !app) return;
-            // header offsetHeight is relative to app container
-            const top = header.offsetHeight + 8; // 8px gap
-            btn.style.top = top + 'px';
-        }
+        // As a fallback, also listen to window scroll. Some environments scroll the document instead
+        // of the tab container; use the active tab's scrollTop when available, otherwise window.scrollY.
+        window.addEventListener('scroll', () => {
+            const activeTab = document.querySelector('.tab-content.active');
+            if (!activeTab) return;
+            const st = (activeTab && typeof activeTab.scrollTop !== 'undefined') ? activeTab.scrollTop : (window.scrollY || window.pageYOffset || 0);
+            if (activeTab.id === 'view-home') {
+                updateHeaderState(st);
+            } else {
+                // all other tabs: keep header collapsed
+                collapseHeader();
+            }
+        }, { passive: true });
 
-        window.addEventListener('resize', () => updateReportButtonPosition());
+        // Position quick report button below header
+        // report button is fixed; no dynamic repositioning required
 
         function initMap() {
             const sorocabaCoords = [-23.5015, -47.4581];
@@ -1526,9 +1655,21 @@
                 verified: false
             };
 
-            post.commentsList = post.commentsList || [];
+            // Se o post ainda não tiver uma lista de comentários individual,
+            // preserve os comentários mockados (mockComments) que estão sendo mostrados
+            // copiando-os para post.commentsList. Assim novos comentários são adicionados
+            // sem apagar os comentários existentes exibidos anteriormente.
+            if (!post.commentsList || post.commentsList.length === 0) {
+                if (mockComments && mockComments.length) {
+                    // clona os comentários mockados para não alterar o array global
+                    post.commentsList = mockComments.map(c => Object.assign({}, c));
+                } else {
+                    post.commentsList = [];
+                }
+            }
             post.commentsList.push(newComment);
-            post.comments = (post.comments || 0) + 1;
+            // atualizar contador para refletir o tamanho real da lista
+            post.comments = post.commentsList.length;
             input.value = '';
             // atualiza o feed (contador de comentários) e reabre o detalhe atualizado
             renderFeed();
